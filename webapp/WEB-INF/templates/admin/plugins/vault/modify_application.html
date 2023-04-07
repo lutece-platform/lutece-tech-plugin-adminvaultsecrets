@@ -1,0 +1,22 @@
+ <#include "manageapplication_tabs.html" />
+<@tabs2 tab="application" />
+
+
+<@box>
+	<@boxHeader title='#i18n{vault.modify_application.title}' />
+	<@boxBody>
+    <@tform class="form-horizontal" method="post" name="modify_application" action="jsp/admin/plugins/vault/ManageApplications.jsp" >
+			<@messages errors=errors />
+			<@input type="hidden" id="id" name="id" value="${application.id}"/>
+			<@input type="hidden" value="${token}" name="token" />
+			
+			<@formGroup labelFor='name' labelKey='#i18n{vault.modify_application.labelName}' mandatory=true>
+				<@input type='text' id='name' name='name'  maxlength=50 value='${application.name!\'\'}' tabIndex='0' />
+			</@formGroup>
+			<@formGroup labelFor='code' labelKey='#i18n{vault.modify_application.labelCode}' mandatory=true>
+				<@input type='text' id='code' name='code'  maxlength=50 value='${application.code!\'\'}' tabIndex='1' />
+			</@formGroup>
+        <@actionButtons button1Name="action_modifyApplication" button2Name="view_manageApplication"/>
+    </@tform>
+	</@boxBody>
+</@box>

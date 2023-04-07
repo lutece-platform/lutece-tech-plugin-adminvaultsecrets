@@ -1,0 +1,47 @@
+<#include "manageapplication_tabs.html" />
+<@tabs2 tab="properties" />
+
+<@box>
+	<@boxHeader title='#i18n{vault.manage_properties.title}' boxTools=true>
+		<@tform class='form-inline pull-right' name='manage_properties' action='jsp/admin/plugins/vault/ManageProperties.jsp'>
+            <@input type='hidden' value='${environnement.id}' name='idEnv' />
+            <@button type='submit' name='view_createProperties' buttonIcon='plus' title='#i18n{vault.manage_properties.buttonAdd}' />
+		</@tform>
+	</@boxHeader>
+	<@boxBody>    
+    <@messages infos=infos />
+    <@paginationAdmin paginator=paginator combo=1 />
+    <div class="clearfix"></div>
+    <@table>
+        <tr>
+            <th>#i18n{vault.manage_properties.columnKey}</th>
+            <th>#i18n{vault.manage_properties.columnValue}</th>
+            <th>#i18n{vault.manage_properties.columnIdenvironnement}</th>
+            <th>#i18n{portal.util.labelActions}</th>
+        </tr>
+        <@tableHeadBodySeparator />
+        <#list properties_list as properties >
+        <tr>
+            <td>
+				${properties.key}
+			</td>
+            <td>
+				${properties.value}
+			</td>
+            <td>
+				${properties.idenvironnement}
+			</td>
+        	<td>
+				<@aButton href='jsp/admin/plugins/vault/ManageProperties.jsp?view=modifyProperties&id=${properties.id}' title='#i18n{portal.util.labelModify}' hideTitle=['all'] buttonIcon='pencil' />
+						
+				<@aButton href='jsp/admin/plugins/vault/ManageProperties.jsp?action=confirmRemoveProperties&id=${properties.id}' title='#i18n{portal.util.labelDelete}' buttonIcon='trash' hideTitle=['all'] color='btn-danger'  />
+
+	        </td>
+        </tr>
+        </#list>
+    </@table>
+
+    <@paginationAdmin paginator=paginator />
+
+  </@boxBody>
+</@box>

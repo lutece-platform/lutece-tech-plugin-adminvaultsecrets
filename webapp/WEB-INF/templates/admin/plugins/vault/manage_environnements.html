@@ -1,0 +1,67 @@
+<#include "manageapplication_tabs.html" />
+<@tabs2 tab="environnement" />
+
+<@box>
+	<@boxBody>
+    <@messages infos=infos warnings=warnings/>
+    <div class="clearfix"> </div>
+    <@table>
+        <tr>
+            <th>#i18n{vault.manage_environnements.columnCode}</th>
+            <th>#i18n{vault.manage_environnements.columnToken}</th>
+            <th>#i18n{vault.manage_environnements.columnIdapplication}</th>
+            <th>#i18n{portal.util.labelActions}</th>
+        </tr>
+
+        <@tform name='create_environnement' action='jsp/admin/plugins/vault/ManageEnvironnements.jsp' >
+
+            <@messages errors=errors />
+            <@input type="hidden" id="id" name="id"/>
+            <@input type="hidden" value="${token}" name="token" />
+            <@input type="hidden" value="${application.id}" name="idApp" />
+            <tr>
+                <td>
+                    <@select name='code' id='code' default_value='' items=environnement_names_example sort=true size='sm' />
+                </td>
+                <td>
+                    <@input type='hidden' id='token' name='token'  value='${application.id}' tabIndex='2' />
+
+                </td>
+                <td>
+                    <@input type='hidden' id='idapplication' name='idapplication'  value='${application.id}' tabIndex='2' />
+                </td>
+                <td>
+                    <@actionButtons button1Name="action_createEnvironnement"/>
+                </td>
+            </tr>
+        </@tform>
+
+        <@tableHeadBodySeparator />
+
+        <#list environnement_list as environnement >
+
+        <tr>
+            <td>
+				${environnement.code}
+			</td>
+            <td>
+                <@aButton href='jsp/admin/plugins/vault/ManageProperties.jsp?idEnv=${environnement.id}' title='#i18n{portal.util.labelConfig}' buttonIcon='sync' hideTitle=['all']  />
+			</td>
+            <td>
+				${environnement.idapplication}
+			</td>
+        	<td>
+				<@aButton href='jsp/admin/plugins/vault/ManageEnvironnements.jsp?view=modifyEnvironnement&id=${environnement.id}' title='#i18n{portal.util.labelModify}' hideTitle=['all'] buttonIcon='pencil' />
+                <@aButton href='jsp/admin/plugins/vault/ManageProperties.jsp?idEnv=${environnement.id}' title='#i18n{portal.util.labelConfig}' buttonIcon='arrow-right' hideTitle=['all']  />
+
+                <@aButton href='jsp/admin/plugins/vault/ManageEnvironnements.jsp?action=confirmRemoveEnvironnement&id=${environnement.id}' title='#i18n{portal.util.labelDelete}' buttonIcon='trash' hideTitle=['all'] color='btn-danger'  />
+
+	        </td>
+        </tr>
+        </#list>
+    </@table>
+
+    <@paginationAdmin paginator=paginator />
+
+  </@boxBody>
+</@box>
