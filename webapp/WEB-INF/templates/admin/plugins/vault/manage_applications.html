@@ -1,0 +1,43 @@
+<#include "manageapplication_tabs.html" />
+<@tabs2 tab="application" />
+
+<@box>
+	<@boxHeader title='#i18n{vault.manage_application.title}' boxTools=true>
+		<@tform class='form-inline pull-right' name='manage_application' action='jsp/admin/plugins/vault/ManageApplications.jsp'>
+			<@button type='submit' name='view_createApplication' buttonIcon='plus' title='#i18n{vault.manage_applications.buttonAdd}' />
+		</@tform>
+	</@boxHeader>
+	<@boxBody>    
+    <@messages infos=infos />
+    <@paginationAdmin paginator=paginator combo=1 />
+    <div class="clearfix"></div>
+    <@table>
+        <tr>
+            <th>#i18n{vault.manage_applications.columnName}</th>
+            <th>#i18n{vault.manage_applications.columnCode}</th>
+            <th>#i18n{portal.util.labelActions}</th>
+        </tr>
+        <@tableHeadBodySeparator />
+        <#list application_list as application >
+        <tr>
+            <td>
+				${application.name}
+			</td>
+            <td>
+				${application.code}
+			</td>
+        	<td>
+				<@aButton href='jsp/admin/plugins/vault/ManageApplications.jsp?view=modifyApplication&id=${application.id}' title='#i18n{portal.util.labelModify}' hideTitle=['all'] buttonIcon='pencil' />
+
+                <@aButton href='jsp/admin/plugins/vault/ManageEnvironnements.jsp?idApp=${application.id}' title='#i18n{portal.util.labelConfig}' buttonIcon='arrow-right' hideTitle=['all']  />
+
+                <@aButton href='jsp/admin/plugins/vault/ManageApplications.jsp?action=confirmRemoveApplication&id=${application.id}' title='#i18n{portal.util.labelDelete}' buttonIcon='trash' hideTitle=['all'] color='btn-danger'  />
+            </td>
+        </tr>
+        </#list>
+    </@table>
+
+    <@paginationAdmin paginator=paginator />
+
+  </@boxBody>
+</@box>
