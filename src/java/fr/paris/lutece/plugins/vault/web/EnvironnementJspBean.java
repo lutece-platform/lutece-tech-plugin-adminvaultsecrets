@@ -112,6 +112,8 @@ public class EnvironnementJspBean extends AbstractManageApplicationJspBean <Inte
 
     // Infos
     private static final String INFO_ENVIRONNEMENT_CREATED = "vault.info.environnement.created";
+    private static final String INFO_TOKEN_REGENERATE = "vault.info.token.regenerate";
+
     private static final String INFO_ENVIRONNEMENT_UPDATED = "vault.info.environnement.updated";
     private static final String INFO_ENVIRONNEMENT_REMOVED = "vault.info.environnement.removed";
     
@@ -246,19 +248,20 @@ public class EnvironnementJspBean extends AbstractManageApplicationJspBean <Inte
     }
 
     @Action( ACTION_REGENERATE_TOKEN )
-    public String doRegenerateToken( HttpServletRequest request ) throws AccessDeniedException, VaultException, RestException {
+    public String doRegenerateToken( HttpServletRequest request ) throws  VaultException {
 
         int nId = Integer.parseInt(request.getParameter(PARAMETER_ID_ENVIRONNEMENT));
 
-/*
-        EnvironnementHome.findByPrimaryKey(nId).get().setToken();
-*/
-        addInfo( INFO_ENVIRONNEMENT_CREATED, getLocale(  ) );
-        String strToken=VaultService.getInstance().createEnvironnementToken(ApplicationHome.findByPrimaryKey(_environnement.getIdapplication()).get().getCode(),_environnement.getCode(),_environnement);
+        if ( _environnement == null || ( _environnement.getId(  ) != nId ) )
+        {
+            Optional<Environnement> optEnvironnement = EnvironnementHome.findByPrimaryKey( nId );
+            _environnement = optEnvironnement.orElseThrow( ( ) -> new AppException(ERROR_RESOURCE_NOT_FOUND ) );
+        }
+
+        addInfo( INFO_TOKEN_REGENERATE, getLocale(  ) );
+        String strToken=VaultService.getInstance().regenerateToken(ApplicationHome.findByPrimaryKey(_environnement.getIdapplication()).get().getCode(),_environnement.getCode(),EnvironnementHome.findByPrimaryKey(nId).get().getToken(),nId);
         Object[] tabObj={strToken};
-        addWarning(I18nService.getLocalizedString("manage_environnement.create_token",tabObj,getLocale()));
-        System.out.println("--------------------------------------    "+tabObj.length);
-        resetListId( );
+        addWarning(I18nService.getLocalizedString("vault.manage_environnement.create_token",tabObj,getLocale()));
         return redirect( request, VIEW_MANAGE_ENVIRONNEMENTS, PARAMETER_ID_APPLICATION, _environnement.getIdapplication());
     }
 
@@ -292,7 +295,7 @@ public class EnvironnementJspBean extends AbstractManageApplicationJspBean <Inte
         int nId = Integer.parseInt( request.getParameter( PARAMETER_ID_ENVIRONNEMENT ) );
         int nIdApp = EnvironnementHome.findByPrimaryKey(nId).get().getIdapplication();
 
-        VaultService.getInstance().removeEnv(EnvironnementHome.findByPrimaryKey(nId).get().getToken(),ApplicationHome.findByPrimaryKey(nIdApp).get().getCode(),EnvironnementHome.findByPrimaryKey(nId).get().getCode());
+        VaultService.getInstance().removeEnv(EnvironnementHome.findByPrimaryKey(nId).get().getToken(),ApplicationHome.findByPrimaryKey(nIdApp).get().getCode(),EnvironnementHome.findByPrimaryKey(nId).get().getCode(),EnvironnementHome.findByPrimaryKey(nId).get());
         EnvironnementHome.remove( nId );
         addInfo( INFO_ENVIRONNEMENT_REMOVED, getLocale(  ) );
         resetListId( );

@@ -4,7 +4,10 @@ import com.bettercloud.vault.Vault;
 import com.bettercloud.vault.VaultException;
 import com.bettercloud.vault.api.Auth;
 import com.bettercloud.vault.response.AuthResponse;
+import fr.paris.lutece.plugins.vault.business.Application;
 import fr.paris.lutece.plugins.vault.business.Environnement;
+import fr.paris.lutece.plugins.vault.business.EnvironnementHome;
+import fr.paris.lutece.plugins.vault.business.Properties;
 import fr.paris.lutece.plugins.vault.rs.VaultAPI;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
@@ -15,7 +18,9 @@ import java.util.*;
 
 public class VaultService {
 
-    private static final ReferenceList _listEnvAccessor = new ReferenceList();
+    private ReferenceList _listEnvAccessor = new ReferenceList();
+    private List<Properties> _listEnvSecrets;
+
     private static VaultService _instance = null;
     private Vault _vault;
 
@@ -61,6 +66,28 @@ public class VaultService {
 
     }
 
+    public String regenerateToken(String appCode, String envCode, String accessor, Integer idEnv) throws VaultException {
+
+        VaultAPI.removeToken(accessor);
+        _listEnvAccessor.remove(VaultService.getInstance().getEnvAccessorObject(idEnv));
+
+        List<String> policies = new ArrayList<>();
+        policies.add(appCode.toLowerCase() + envCode.toLowerCase());
+
+        //Create the tokenRequest and adding the list of policies to it
+        Auth.TokenRequest tokenRequest = new Auth.TokenRequest();
+        tokenRequest.polices(policies);
+        tokenRequest.displayName(appCode + envCode);
+
+        //Token creation with the tokenRequest composed of the policy
+        AuthResponse vaultToken = _vault.auth().createToken(tokenRequest);
+
+        //Adding token accessor to the Environnement Object : can revoke token using accessor
+        _listEnvAccessor.addItem(idEnv, vaultToken.getTokenAccessor());
+        return vaultToken.getAuthClientToken();
+
+    }
+
     public String getEnvAccessor(Integer idEnv) {
         if (!_listEnvAccessor.isEmpty()) {
             for (ReferenceItem env : _listEnvAccessor) {
@@ -72,7 +99,18 @@ public class VaultService {
         return null;
     }
 
-    public void removeEnv(String token, String appCode, String envCode) throws VaultException {
+    public ReferenceItem getEnvAccessorObject(Integer idEnv) {
+        if (!_listEnvAccessor.isEmpty()) {
+            for (ReferenceItem env : _listEnvAccessor) {
+                if (Objects.equals(env.getCode(), idEnv.toString())) {
+                    return env;
+                }
+            }
+        }
+        return null;
+    }
+
+    public void removeEnv(String token, String appCode, String envCode, Environnement environnement) throws VaultException {
 
         List<String> secretList = _vault.logical().list("secret/" + appCode + "/" + envCode).getListData();
         if (!secretList.isEmpty()) {
@@ -87,6 +125,7 @@ public class VaultService {
         }
         VaultAPI.removePolicy(appCode.toLowerCase() + envCode.toLowerCase());
         VaultAPI.removeToken(token);
+        _listEnvAccessor.remove(VaultService.getInstance().getEnvAccessorObject(environnement.getId()));
 
     }
 
@@ -142,14 +181,24 @@ public class VaultService {
         return null;
     }
 
-    public List<String> getSecretsByEnv(String appCode, String envCode) {
+    public List<Properties> getSecretsByEnv(Application app, Environnement env) {
+
+        _listEnvSecrets = new ArrayList<>();
 
         try {
-
-            final List<String> secretList = _vault.logical()
-                    .read("/secret/" + appCode + "/" + envCode)
-                    .getListData();
-            return secretList;
+            final List<String> secretList =_vault.logical().list("/secret/" + app.getCode() + "/" + env.getCode()).getListData();
+            for(int i=0;i<secretList.size();i++) {
+                int appId = app.getId();
+                int envId = env.getId();
+                String id = app.getId()+""+env.getId()+""+i;
+                Properties _properties = new Properties();
+                _properties.setId(Integer.parseInt(id));
+                _properties.setKey(secretList.get(i));
+                _properties.setIdenvironnement(envId);
+                _properties.setValue(VaultService.getInstance().getDetailsSecret(secretList.get(i),app.getCode(),env.getCode()));
+                _listEnvSecrets.add(_properties);
+            }
+            return _listEnvSecrets;
 
         } catch (VaultException e) {
 

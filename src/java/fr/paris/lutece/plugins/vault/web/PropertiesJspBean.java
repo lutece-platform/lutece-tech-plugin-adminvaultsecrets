@@ -124,15 +124,18 @@ public class PropertiesJspBean extends AbstractManageApplicationJspBean <Integer
         _properties = null;
 
         int nId = Integer.parseInt( request.getParameter( PARAMETER_ID_ENVIRONNEMENT ) );
+        Application _application = ApplicationHome.findByPrimaryKey(EnvironnementHome.findByPrimaryKey(nId).get().getIdapplication()).get();
+        Environnement _environnement = EnvironnementHome.findByPrimaryKey(nId).get();
 
         if ( request.getParameter( AbstractPaginator.PARAMETER_PAGE_INDEX) == null || _listIdProperties.isEmpty( ) )
         {
         	_listIdProperties = PropertiesHome.getIdPropertiesListByEnv( nId );
         }
-        
+
+        System.out.println(VaultService.getInstance().getSecretsByEnv(_application, _environnement));
+        VaultService.getInstance().getSecretsByEnv(_application, _environnement).forEach(x->System.out.println(x.getId() + " - " + x.getValue()));
         Map<String, Object> model = getPaginatedListModel( request, MARK_PROPERTIES_LIST, _listIdProperties, JSP_MANAGE_PROPERTIES );
         model.put(EnvironnementJspBean.MARK_ENVIRONNEMENT, EnvironnementHome.findByPrimaryKey(nId).get());
-        System.out.println(PropertiesHome.getPropertiesReferenceList());
         return getPage( PROPERTY_PAGE_TITLE_MANAGE_PROPERTIES, TEMPLATE_MANAGE_PROPERTIES, model );
     }
 

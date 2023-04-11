@@ -35,6 +35,7 @@
 
  package fr.paris.lutece.plugins.vault.business;
 
+import fr.paris.lutece.plugins.vault.service.VaultService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
@@ -67,6 +68,7 @@ public final class PropertiesHome
      */
     public static Properties create( Properties properties )
     {
+
         _dao.insert( properties, _plugin );
 
         return properties;
@@ -138,6 +140,7 @@ public final class PropertiesHome
      */
     public static List<Properties> getPropertiesListByIds( List<Integer> listIds )
     {
+
         return _dao.selectPropertiesListByIds( _plugin, listIds );
     }
 
