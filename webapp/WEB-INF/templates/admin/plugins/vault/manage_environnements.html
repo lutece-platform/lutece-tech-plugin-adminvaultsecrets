@@ -9,7 +9,6 @@
         <tr>
             <th>#i18n{vault.manage_environnements.columnCode}</th>
             <th>#i18n{vault.manage_environnements.columnToken}</th>
-            <th>#i18n{vault.manage_environnements.columnIdapplication}</th>
             <th>#i18n{portal.util.labelActions}</th>
         </tr>
 
@@ -25,7 +24,6 @@
                 </td>
                 <td>
                     <@input type='hidden' id='token' name='token'  value='${application.id}' tabIndex='2' />
-
                 </td>
                 <td>
                     <@input type='hidden' id='idapplication' name='idapplication'  value='${application.id}' tabIndex='2' />
@@ -45,10 +43,7 @@
 				${environnement.code}
 			</td>
             <td>
-                <@aButton href='jsp/admin/plugins/vault/ManageProperties.jsp?idEnv=${environnement.id}' title='#i18n{portal.util.labelConfig}' buttonIcon='sync' hideTitle=['all']  />
-			</td>
-            <td>
-				${environnement.idapplication}
+                <@aButton href='jsp/admin/plugins/vault/ManageEnvironnements.jsp?action=regenerateToken&id=${environnement.id}' title='#i18n{portal.util.labelModify}' hideTitle=['all'] buttonIcon='sync' />
 			</td>
         	<td>
 				<@aButton href='jsp/admin/plugins/vault/ManageEnvironnements.jsp?view=modifyEnvironnement&id=${environnement.id}' title='#i18n{portal.util.labelModify}' hideTitle=['all'] buttonIcon='pencil' />
