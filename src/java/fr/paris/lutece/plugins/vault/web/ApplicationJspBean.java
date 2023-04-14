@@ -31,8 +31,7 @@
  *
  * License 1.0
  */
- 	
- 
+
 package fr.paris.lutece.plugins.vault.web;
 
 import fr.paris.lutece.portal.service.message.AdminMessage;
@@ -57,10 +56,10 @@ import fr.paris.lutece.plugins.vault.business.Application;
 import fr.paris.lutece.plugins.vault.business.ApplicationHome;
 
 /**
- * This class provides the user interface to manage Application features ( manage, create, modify, remove )
+ * The type Application jsp bean.
  */
 @Controller( controllerJsp = "ManageApplications.jsp", controllerPath = "jsp/admin/plugins/vault/", right = "VAULT_MANAGEMENT" )
-public class ApplicationJspBean extends AbstractManageApplicationJspBean <Integer, Application>
+public class ApplicationJspBean extends AbstractManageApplicationJspBean<Integer, Application>
 {
     // Templates
     private static final String TEMPLATE_MANAGE_APPLICATIONS = "/admin/plugins/vault/manage_applications.html";
@@ -77,6 +76,9 @@ public class ApplicationJspBean extends AbstractManageApplicationJspBean <Intege
 
     // Markers
     private static final String MARK_APPLICATION_LIST = "application_list";
+    /**
+     * The constant MARK_APPLICATION.
+     */
     public static final String MARK_APPLICATION = "application";
 
     private static final String JSP_MANAGE_APPLICATIONS = "jsp/admin/plugins/vault/ManageApplications.jsp";
@@ -102,70 +104,66 @@ public class ApplicationJspBean extends AbstractManageApplicationJspBean <Intege
     private static final String INFO_APPLICATION_CREATED = "vault.info.application.created";
     private static final String INFO_APPLICATION_UPDATED = "vault.info.application.updated";
     private static final String INFO_APPLICATION_REMOVED = "vault.info.application.removed";
-    
+
     // Errors
     private static final String ERROR_RESOURCE_NOT_FOUND = "Resource not found";
-    
+
     // Session variable to store working values
     private Application _application;
     private List<Integer> _listIdApplications;
-    
+
     /**
-     * Build the Manage View
-     * @param request The HTTP request
-     * @return The page
+     * Gets manage applications.
+     *
+     * @param request
+     *            the request
+     * @return the manage applications
      */
     @View( value = VIEW_MANAGE_APPLICATIONS, defaultView = true )
     public String getManageApplications( HttpServletRequest request )
     {
         _application = null;
-        
-        if ( request.getParameter( AbstractPaginator.PARAMETER_PAGE_INDEX) == null || _listIdApplications.isEmpty( ) )
+
+        if ( request.getParameter( AbstractPaginator.PARAMETER_PAGE_INDEX ) == null || _listIdApplications.isEmpty( ) )
         {
-        	_listIdApplications = ApplicationHome.getIdApplicationsList(  );
+            _listIdApplications = ApplicationHome.getIdApplicationsList( );
         }
-        
+
         Map<String, Object> model = getPaginatedListModel( request, MARK_APPLICATION_LIST, _listIdApplications, JSP_MANAGE_APPLICATIONS );
 
         return getPage( PROPERTY_PAGE_TITLE_MANAGE_APPLICATIONS, TEMPLATE_MANAGE_APPLICATIONS, model );
     }
 
-	/**
-     * Get Items from Ids list
-     * @param listIds
-     * @return the populated list of items corresponding to the id List
-     */
-	@Override
-	List<Application> getItemsFromIds( List<Integer> listIds ) 
-	{
-		List<Application> listApplication = ApplicationHome.getApplicationsListByIds( listIds );
-		
-		// keep original order
-        return listApplication.stream()
-                 .sorted(Comparator.comparingInt( notif -> listIds.indexOf( notif.getId())))
-                 .collect(Collectors.toList());
-	}
-    
-    /**
-    * reset the _listIdApplications list
-    */
-    public void resetListId( )
+    @Override
+    List<Application> getItemsFromIds( List<Integer> listIds )
     {
-    	_listIdApplications = new ArrayList<>( );
+        List<Application> listApplication = ApplicationHome.getApplicationsListByIds( listIds );
+
+        // keep original order
+        return listApplication.stream( ).sorted( Comparator.comparingInt( notif -> listIds.indexOf( notif.getId( ) ) ) ).collect( Collectors.toList( ) );
     }
 
     /**
-     * Returns the form to create a application
+     * Reset list id.
+     */
+    public void resetListId( )
+    {
+        _listIdApplications = new ArrayList<>( );
+    }
+
+    /**
+     * Gets create application.
      *
-     * @param request The Http request
-     * @return the html code of the application form
+     * @param request
+     *            the request
+     * @return the create application
      */
     @View( VIEW_CREATE_APPLICATION )
     public String getCreateApplication( HttpServletRequest request )
     {
-        _application = ( _application != null ) ? _application : new Application(  );
+        _application = ( _application != null ) ? _application : new Application( );
 
-        Map<String, Object> model = getModel(  );
+        Map<String, Object> model = getModel( );
         model.put( MARK_APPLICATION, _application );
         model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_CREATE_APPLICATION ) );
 
@@ -173,21 +171,22 @@ public class ApplicationJspBean extends AbstractManageApplicationJspBean <Intege
     }
 
     /**
-     * Process the data capture form of a new application
+     * Do create application string.
      *
-     * @param request The Http Request
-     * @return The Jsp URL of the process result
+     * @param request
+     *            the request
+     * @return the string
      * @throws AccessDeniedException
+     *             the access denied exception
      */
     @Action( ACTION_CREATE_APPLICATION )
     public String doCreateApplication( HttpServletRequest request ) throws AccessDeniedException
     {
         populate( _application, request, getLocale( ) );
-        
 
         if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_CREATE_APPLICATION ) )
         {
-            throw new AccessDeniedException ( "Invalid security token" );
+            throw new AccessDeniedException( "Invalid security token" );
         }
 
         // Check constraints
@@ -197,18 +196,18 @@ public class ApplicationJspBean extends AbstractManageApplicationJspBean <Intege
         }
 
         ApplicationHome.create( _application );
-        addInfo( INFO_APPLICATION_CREATED, getLocale(  ) );
+        addInfo( INFO_APPLICATION_CREATED, getLocale( ) );
         resetListId( );
 
         return redirectView( request, VIEW_MANAGE_APPLICATIONS );
     }
 
     /**
-     * Manages the removal form of a application whose identifier is in the http
-     * request
+     * Gets confirm remove application.
      *
-     * @param request The Http request
-     * @return the html code to confirm
+     * @param request
+     *            the request
+     * @return the confirm remove application
      */
     @Action( ACTION_CONFIRM_REMOVE_APPLICATION )
     public String getConfirmRemoveApplication( HttpServletRequest request )
@@ -217,49 +216,49 @@ public class ApplicationJspBean extends AbstractManageApplicationJspBean <Intege
         UrlItem url = new UrlItem( getActionUrl( ACTION_REMOVE_APPLICATION ) );
         url.addParameter( PARAMETER_ID_APPLICATION, nId );
 
-        String strMessageUrl = AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_REMOVE_APPLICATION, url.getUrl(  ), AdminMessage.TYPE_CONFIRMATION );
+        String strMessageUrl = AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_REMOVE_APPLICATION, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
 
         return redirect( request, strMessageUrl );
     }
 
     /**
-     * Handles the removal form of a application
+     * Do remove application string.
      *
-     * @param request The Http request
-     * @return the jsp URL to display the form to manage applications
+     * @param request
+     *            the request
+     * @return the string
      */
     @Action( ACTION_REMOVE_APPLICATION )
     public String doRemoveApplication( HttpServletRequest request )
     {
         int nId = Integer.parseInt( request.getParameter( PARAMETER_ID_APPLICATION ) );
-        
-        
+
         ApplicationHome.remove( nId );
-        addInfo( INFO_APPLICATION_REMOVED, getLocale(  ) );
+        addInfo( INFO_APPLICATION_REMOVED, getLocale( ) );
         resetListId( );
 
         return redirectView( request, VIEW_MANAGE_APPLICATIONS );
     }
 
     /**
-     * Returns the form to update info about a application
+     * Gets modify application.
      *
-     * @param request The Http request
-     * @return The HTML form to update info
+     * @param request
+     *            the request
+     * @return the modify application
      */
     @View( VIEW_MODIFY_APPLICATION )
     public String getModifyApplication( HttpServletRequest request )
     {
         int nId = Integer.parseInt( request.getParameter( PARAMETER_ID_APPLICATION ) );
 
-        if ( _application == null || ( _application.getId(  ) != nId ) )
+        if ( _application == null || ( _application.getId( ) != nId ) )
         {
             Optional<Application> optApplication = ApplicationHome.findByPrimaryKey( nId );
-            _application = optApplication.orElseThrow( ( ) -> new AppException(ERROR_RESOURCE_NOT_FOUND ) );
+            _application = optApplication.orElseThrow( ( ) -> new AppException( ERROR_RESOURCE_NOT_FOUND ) );
         }
 
-
-        Map<String, Object> model = getModel(  );
+        Map<String, Object> model = getModel( );
         model.put( MARK_APPLICATION, _application );
         model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_MODIFY_APPLICATION ) );
 
@@ -267,21 +266,22 @@ public class ApplicationJspBean extends AbstractManageApplicationJspBean <Intege
     }
 
     /**
-     * Process the change form of a application
+     * Do modify application string.
      *
-     * @param request The Http request
-     * @return The Jsp URL of the process result
+     * @param request
+     *            the request
+     * @return the string
      * @throws AccessDeniedException
+     *             the access denied exception
      */
     @Action( ACTION_MODIFY_APPLICATION )
     public String doModifyApplication( HttpServletRequest request ) throws AccessDeniedException
-    {   
+    {
         populate( _application, request, getLocale( ) );
-		
-		
+
         if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_MODIFY_APPLICATION ) )
         {
-            throw new AccessDeniedException ( "Invalid security token" );
+            throw new AccessDeniedException( "Invalid security token" );
         }
 
         // Check constraints
@@ -291,7 +291,7 @@ public class ApplicationJspBean extends AbstractManageApplicationJspBean <Intege
         }
 
         ApplicationHome.update( _application );
-        addInfo( INFO_APPLICATION_UPDATED, getLocale(  ) );
+        addInfo( INFO_APPLICATION_UPDATED, getLocale( ) );
         resetListId( );
 
         return redirectView( request, VIEW_MANAGE_APPLICATIONS );

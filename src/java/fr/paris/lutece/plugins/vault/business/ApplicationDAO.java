@@ -32,7 +32,6 @@
  * License 1.0
  */
 
-
 package fr.paris.lutece.plugins.vault.business;
 
 import fr.paris.lutece.portal.service.plugin.Plugin;
@@ -64,19 +63,19 @@ public final class ApplicationDAO implements IApplicationDAO
     @Override
     public void insert( Application application, Plugin plugin )
     {
-        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, plugin ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, plugin ) )
         {
             int nIndex = 1;
-            daoUtil.setString( nIndex++ , application.getName( ) );
-            daoUtil.setString( nIndex++ , application.getCode( ) );
-            
+            daoUtil.setString( nIndex++, application.getName( ) );
+            daoUtil.setString( nIndex++, application.getCode( ) );
+
             daoUtil.executeUpdate( );
-            if ( daoUtil.nextGeneratedKey( ) ) 
+            if ( daoUtil.nextGeneratedKey( ) )
             {
                 application.setId( daoUtil.getGeneratedKeyInt( 1 ) );
             }
         }
-        
+
     }
 
     /**
@@ -85,23 +84,23 @@ public final class ApplicationDAO implements IApplicationDAO
     @Override
     public Optional<Application> load( int nKey, Plugin plugin )
     {
-        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, plugin ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, plugin ) )
         {
-	        daoUtil.setInt( 1 , nKey );
-	        daoUtil.executeQuery( );
-	        Application application = null;
-	
-	        if ( daoUtil.next( ) )
-	        {
-	            application = new Application();
-	            int nIndex = 1;
-	            
-	            application.setId( daoUtil.getInt( nIndex++ ) );
-			    application.setName( daoUtil.getString( nIndex++ ) );
-			    application.setCode( daoUtil.getString( nIndex ) );
-	        }
-	
-	        return Optional.ofNullable( application );
+            daoUtil.setInt( 1, nKey );
+            daoUtil.executeQuery( );
+            Application application = null;
+
+            if ( daoUtil.next( ) )
+            {
+                application = new Application( );
+                int nIndex = 1;
+
+                application.setId( daoUtil.getInt( nIndex++ ) );
+                application.setName( daoUtil.getString( nIndex++ ) );
+                application.setCode( daoUtil.getString( nIndex ) );
+            }
+
+            return Optional.ofNullable( application );
         }
     }
 
@@ -111,10 +110,10 @@ public final class ApplicationDAO implements IApplicationDAO
     @Override
     public void delete( int nKey, Plugin plugin )
     {
-        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin ) )
         {
-	        daoUtil.setInt( 1 , nKey );
-	        daoUtil.executeUpdate( );
+            daoUtil.setInt( 1, nKey );
+            daoUtil.executeUpdate( );
         }
     }
 
@@ -124,15 +123,15 @@ public final class ApplicationDAO implements IApplicationDAO
     @Override
     public void store( Application application, Plugin plugin )
     {
-        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, plugin ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, plugin ) )
         {
-	        int nIndex = 1;
-	        
-            	daoUtil.setString( nIndex++ , application.getName( ) );
-            	daoUtil.setString( nIndex++ , application.getCode( ) );
-	        daoUtil.setInt( nIndex , application.getId( ) );
-	
-	        daoUtil.executeUpdate( );
+            int nIndex = 1;
+
+            daoUtil.setString( nIndex++, application.getName( ) );
+            daoUtil.setString( nIndex++, application.getCode( ) );
+            daoUtil.setInt( nIndex, application.getId( ) );
+
+            daoUtil.executeUpdate( );
         }
     }
 
@@ -142,27 +141,27 @@ public final class ApplicationDAO implements IApplicationDAO
     @Override
     public List<Application> selectApplicationsList( Plugin plugin )
     {
-        List<Application> applicationList = new ArrayList<>(  );
-        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin ) )
+        List<Application> applicationList = new ArrayList<>( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin ) )
         {
-	        daoUtil.executeQuery(  );
-	
-	        while ( daoUtil.next(  ) )
-	        {
-	            Application application = new Application(  );
-	            int nIndex = 1;
-	            
-	            application.setId( daoUtil.getInt( nIndex++ ) );
-			    application.setName( daoUtil.getString( nIndex++ ) );
-			    application.setCode( daoUtil.getString( nIndex ) );
-	
-	            applicationList.add( application );
-	        }
-	
-	        return applicationList;
+            daoUtil.executeQuery( );
+
+            while ( daoUtil.next( ) )
+            {
+                Application application = new Application( );
+                int nIndex = 1;
+
+                application.setId( daoUtil.getInt( nIndex++ ) );
+                application.setName( daoUtil.getString( nIndex++ ) );
+                application.setCode( daoUtil.getString( nIndex ) );
+
+                applicationList.add( application );
+            }
+
+            return applicationList;
         }
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -170,83 +169,85 @@ public final class ApplicationDAO implements IApplicationDAO
     public List<Integer> selectIdApplicationsList( Plugin plugin )
     {
         List<Integer> applicationList = new ArrayList<>( );
-        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL_ID, plugin ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL_ID, plugin ) )
         {
-	        daoUtil.executeQuery(  );
-	
-	        while ( daoUtil.next(  ) )
-	        {
-	            applicationList.add( daoUtil.getInt( 1 ) );
-	        }
-	
-	        return applicationList;
+            daoUtil.executeQuery( );
+
+            while ( daoUtil.next( ) )
+            {
+                applicationList.add( daoUtil.getInt( 1 ) );
+            }
+
+            return applicationList;
         }
     }
-    
+
     /**
      * {@inheritDoc }
      */
     @Override
     public ReferenceList selectApplicationsReferenceList( Plugin plugin )
     {
-        ReferenceList applicationList = new ReferenceList();
-        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin ) )
+        ReferenceList applicationList = new ReferenceList( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin ) )
         {
-	        daoUtil.executeQuery(  );
-	
-	        while ( daoUtil.next(  ) )
-	        {
-	            applicationList.addItem( daoUtil.getInt( 1 ) , daoUtil.getString( 2 ) );
-	        }
-	
-	        return applicationList;
-    	}
+            daoUtil.executeQuery( );
+
+            while ( daoUtil.next( ) )
+            {
+                applicationList.addItem( daoUtil.getInt( 1 ), daoUtil.getString( 2 ) );
+            }
+
+            return applicationList;
+        }
     }
-    
+
     /**
      * {@inheritDoc }
      */
-	@Override
-	public List<Application> selectApplicationsListByIds( Plugin plugin, List<Integer> listIds ) {
-		List<Application> applicationList = new ArrayList<>(  );
-		
-		StringBuilder builder = new StringBuilder( );
+    @Override
+    public List<Application> selectApplicationsListByIds( Plugin plugin, List<Integer> listIds )
+    {
+        List<Application> applicationList = new ArrayList<>( );
 
-		if ( !listIds.isEmpty( ) )
-		{
-			for( int i = 0 ; i < listIds.size(); i++ ) {
-			    builder.append( "?," );
-			}
-	
-			String placeHolders =  builder.deleteCharAt( builder.length( ) -1 ).toString( );
-			String stmt = SQL_QUERY_SELECTALL_BY_IDS + placeHolders + ")";
-			
-			
-	        try ( DAOUtil daoUtil = new DAOUtil( stmt, plugin ) )
-	        {
-	        	int index = 1;
-				for( Integer n : listIds ) {
-					daoUtil.setInt(  index++, n ); 
-				}
-	        	
-	        	daoUtil.executeQuery(  );
-	        	while ( daoUtil.next(  ) )
-		        {
-		        	Application application = new Application(  );
-		            int nIndex = 1;
-		            
-		            application.setId( daoUtil.getInt( nIndex++ ) );
-				    application.setName( daoUtil.getString( nIndex++ ) );
-				    application.setCode( daoUtil.getString( nIndex ) );
-		            
-		            applicationList.add( application );
-		        }
-		
-		        daoUtil.free( );
-		        
-	        }
-	    }
-		return applicationList;
-		
-	}
+        StringBuilder builder = new StringBuilder( );
+
+        if ( !listIds.isEmpty( ) )
+        {
+            for ( int i = 0; i < listIds.size( ); i++ )
+            {
+                builder.append( "?," );
+            }
+
+            String placeHolders = builder.deleteCharAt( builder.length( ) - 1 ).toString( );
+            String stmt = SQL_QUERY_SELECTALL_BY_IDS + placeHolders + ")";
+
+            try ( DAOUtil daoUtil = new DAOUtil( stmt, plugin ) )
+            {
+                int index = 1;
+                for ( Integer n : listIds )
+                {
+                    daoUtil.setInt( index++, n );
+                }
+
+                daoUtil.executeQuery( );
+                while ( daoUtil.next( ) )
+                {
+                    Application application = new Application( );
+                    int nIndex = 1;
+
+                    application.setId( daoUtil.getInt( nIndex++ ) );
+                    application.setName( daoUtil.getString( nIndex++ ) );
+                    application.setCode( daoUtil.getString( nIndex ) );
+
+                    applicationList.add( application );
+                }
+
+                daoUtil.free( );
+
+            }
+        }
+        return applicationList;
+
+    }
 }

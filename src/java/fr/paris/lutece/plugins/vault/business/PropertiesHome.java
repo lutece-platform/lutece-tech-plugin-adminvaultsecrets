@@ -32,122 +32,97 @@
  * License 1.0
  */
 
+package fr.paris.lutece.plugins.vault.business;
 
- package fr.paris.lutece.plugins.vault.business;
-
+import com.bettercloud.vault.VaultException;
 import fr.paris.lutece.plugins.vault.service.VaultService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.util.ReferenceList;
 
-
 import java.util.List;
 import java.util.Optional;
 
+import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
+
 /**
- * This class provides instances management methods (create, find, ...) for Properties objects
+ * The type Properties home.
  */
 public final class PropertiesHome
 {
     // Static variable pointed at the DAO instance
-    private static IPropertiesDAO _dao = SpringContextService.getBean( "vault.propertiesDAO" );
     private static Plugin _plugin = PluginService.getPlugin( "vault" );
 
-    /**
-     * Private constructor - this class need not be instantiated
-     */
-    private PropertiesHome(  )
+    private PropertiesHome( )
     {
     }
 
     /**
-     * Create an instance of the properties class
-     * @param properties The instance of the Properties which contains the informations to store
-     * @return The  instance of properties which has been created with its primary key.
+     * Create properties.
+     *
+     * @param properties
+     *            the properties
+     * @return the properties
+     * @throws VaultException
+     *             the vault exception
      */
-    public static Properties create( Properties properties )
+    public static Properties create( Properties properties ) throws VaultException
     {
-
-        _dao.insert( properties, _plugin );
+        Environnement env = EnvironnementHome.findByPrimaryKey( properties.getIdenvironnement( ) ).get( );
+        Application app = ApplicationHome.findByPrimaryKey( env.getIdapplication( ) ).get( );
+        VaultService.getInstance( ).writeSecret( properties.getKey( ), properties.getValue( ), app, env );
 
         return properties;
     }
 
     /**
-     * Update of the properties which is specified in parameter
-     * @param properties The instance of the Properties which contains the data to store
-     * @return The instance of the  properties which has been updated
+     * Update properties.
+     *
+     * @param properties
+     *            the properties
+     * @return the properties
+     * @throws VaultException
+     *             the vault exception
      */
-    public static Properties update( Properties properties )
+    public static Properties update( Properties properties ) throws VaultException
     {
-        _dao.store( properties, _plugin );
+        Environnement env = EnvironnementHome.findByPrimaryKey( properties.getIdenvironnement( ) ).get( );
+        Application app = ApplicationHome.findByPrimaryKey( env.getIdapplication( ) ).get( );
+        VaultService.getInstance( ).updateSecret( properties.getKey( ), properties.getValue( ), app, env );
 
         return properties;
     }
 
     /**
-     * Remove the properties whose identifier is specified in parameter
-     * @param nKey The properties Id
+     * Remove.
+     *
+     * @param properties
+     *            the properties
+     * @throws VaultException
+     *             the vault exception
      */
-    public static void remove( int nKey )
+    public static void remove( Properties properties ) throws VaultException
     {
-        _dao.delete( nKey, _plugin );
+        Environnement env = EnvironnementHome.findByPrimaryKey( properties.getIdenvironnement( ) ).get( );
+        Application app = ApplicationHome.findByPrimaryKey( env.getIdapplication( ) ).get( );
+        VaultService.getInstance( ).deleteSecret( properties.getKey( ), app, env );
     }
 
     /**
-     * Returns an instance of a properties whose identifier is specified in parameter
-     * @param nKey The properties primary key
-     * @return an instance of Properties
+     * Gets properties by env id and code.
+     *
+     * @param idEnv
+     *            the id env
+     * @param key
+     *            the key
+     * @return the properties by env id and code
      */
-    public static Optional<Properties> findByPrimaryKey( int nKey )
+    public static Properties getPropertiesByEnvIdAndCode( Integer idEnv, String key )
     {
-        return _dao.load( nKey, _plugin );
-    }
-
-    /**
-     * Load the data of all the properties objects and returns them as a list
-     * @return the list which contains the data of all the properties objects
-     */
-    public static List<Properties> getPropertiesList( )
-    {
-        return _dao.selectPropertiesList( _plugin );
-    }
-    
-    /**
-     * Load the id of all the properties objects and returns them as a list
-     * @return the list which contains the id of all the properties objects
-     */
-    public static List<Integer> getIdPropertiesList( )
-    {
-        return _dao.selectIdPropertiesList( _plugin );
-    }
-    
-    /**
-     * Load the data of all the properties objects and returns them as a referenceList
-     * @return the referenceList which contains the data of all the properties objects
-     */
-    public static ReferenceList getPropertiesReferenceList( )
-    {
-        return _dao.selectPropertiesReferenceList( _plugin );
-    }
-    
-	
-    /**
-     * Load the data of all the avant objects and returns them as a list
-     * @param listIds liste of ids
-     * @return the list which contains the data of all the avant objects
-     */
-    public static List<Properties> getPropertiesListByIds( List<Integer> listIds )
-    {
-
-        return _dao.selectPropertiesListByIds( _plugin, listIds );
-    }
-
-    public static List<Integer> getIdPropertiesListByEnv(Integer idEnv)
-    {
-        return _dao.selectIdPropertiesByIdEnv(idEnv, _plugin);
+        Environnement env = EnvironnementHome.findByPrimaryKey( idEnv ).get( );
+        Application app = ApplicationHome.findByPrimaryKey( env.getIdapplication( ) ).get( );
+        return VaultService.getInstance( ).getSecret( key, app, env );
     }
 
 }
-

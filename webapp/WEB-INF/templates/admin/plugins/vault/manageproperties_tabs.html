@@ -1,0 +1,15 @@
+<#macro tabs2 tab >
+  <@tabs>
+    <@tabList>
+      <li <#if tab="properties">class="active"</#if>>
+        <@aButton href="jsp/admin/plugins/vault/ManageApplications.jsp">#i18n{vault.manage_applications.pageTitle}</@aButton>
+      </li>
+      <li <#if tab="properties">class="active"</#if>>
+        <@aButton href="jsp/admin/plugins/vault/ManageEnvironnements.jsp?idApp=${environnement.idapplication}">#i18n{vault.manage_environnements.pageTitle}</@aButton>
+      </li>
+      <li <#if tab="properties">class="active"</#if>>
+        <@aButton href="jsp/admin/plugins/vault/ManageProperties.jsp?idEnv=${environnement.id}">#i18n{vault.manage_properties.pageTitle}</@aButton>
+      </li>
+    </@tabList>
+  </@tabs>
+</#macro>

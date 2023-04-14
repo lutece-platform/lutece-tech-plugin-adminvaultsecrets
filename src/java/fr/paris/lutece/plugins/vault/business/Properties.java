@@ -36,47 +36,30 @@ package fr.paris.lutece.plugins.vault.business;
 import javax.validation.constraints.Size;
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
+import java.util.List;
+
 /**
- * This is the business class for the object Properties
- */ 
+ * The type Properties.
+ */
 public class Properties implements Serializable
 {
     private static final long serialVersionUID = 1L;
 
-    // Variables declarations 
-    private int _nId;
-    
+    // Variables declarations
     @NotEmpty( message = "#i18n{vault.validation.properties.Key.notEmpty}" )
-    @Size( max = 50 , message = "#i18n{vault.validation.properties.Key.size}" ) 
+    @Size( max = 50, message = "#i18n{vault.validation.properties.Key.size}" )
     private String _strKey;
-    
+
     @NotEmpty( message = "#i18n{vault.validation.properties.Value.notEmpty}" )
-    @Size( max = 50 , message = "#i18n{vault.validation.properties.Value.size}" ) 
+    @Size( max = 50, message = "#i18n{vault.validation.properties.Value.size}" )
     private String _strValue;
-    
+
     private int _nIdenvironnement;
 
     /**
-     * Returns the Id
-     * @return The Id
-     */
-    public int getId( )
-    {
-        return _nId;
-    }
-
-    /**
-     * Sets the Id
-     * @param nId The Id
-     */ 
-    public void setId( int nId )
-    {
-        _nId = nId;
-    }
-    
-    /**
-     * Returns the Key
-     * @return The Key
+     * Gets key.
+     *
+     * @return the key
      */
     public String getKey( )
     {
@@ -84,18 +67,20 @@ public class Properties implements Serializable
     }
 
     /**
-     * Sets the Key
-     * @param strKey The Key
-     */ 
+     * Sets key.
+     *
+     * @param strKey
+     *            the str key
+     */
     public void setKey( String strKey )
     {
         _strKey = strKey;
     }
-    
-    
+
     /**
-     * Returns the Value
-     * @return The Value
+     * Gets value.
+     *
+     * @return the value
      */
     public String getValue( )
     {
@@ -103,18 +88,20 @@ public class Properties implements Serializable
     }
 
     /**
-     * Sets the Value
-     * @param strValue The Value
-     */ 
+     * Sets value.
+     *
+     * @param strValue
+     *            the str value
+     */
     public void setValue( String strValue )
     {
         _strValue = strValue;
     }
-    
-    
+
     /**
-     * Returns the Idenvironnement
-     * @return The Idenvironnement
+     * Gets idenvironnement.
+     *
+     * @return the idenvironnement
      */
     public int getIdenvironnement( )
     {
@@ -122,12 +109,14 @@ public class Properties implements Serializable
     }
 
     /**
-     * Sets the Idenvironnement
-     * @param nIdenvironnement The Idenvironnement
-     */ 
+     * Sets idenvironnement.
+     *
+     * @param nIdenvironnement
+     *            the n idenvironnement
+     */
     public void setIdenvironnement( int nIdenvironnement )
     {
         _nIdenvironnement = nIdenvironnement;
     }
-    
+
 }

@@ -23,7 +23,7 @@
  * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
  * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
  * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES LOSS OF USE, DATA, OR PROFITS OR BUSINESS
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
  * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
@@ -31,7 +31,6 @@
  *
  * License 1.0
  */
-
 package fr.paris.lutece.plugins.vault.web;
 
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -48,6 +47,7 @@ import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.web.LocalVariables;
 import fr.paris.lutece.plugins.vault.business.Application;
 import fr.paris.lutece.plugins.vault.business.ApplicationHome;
+
 /**
  * This is the business class test for the object Application
  */
@@ -58,132 +58,129 @@ public class ApplicationJspBeanTest extends LuteceTestCase
     private static final String CODE1 = "Code1";
     private static final String CODE2 = "Code2";
 
-public void testJspBeans(  ) throws AccessDeniedException, IOException
-	{	
-     	MockHttpServletRequest request = new MockHttpServletRequest();
-		MockHttpServletResponse response = new MockHttpServletResponse();
-		MockServletConfig config = new MockServletConfig();
+    public void testJspBeans( ) throws AccessDeniedException, IOException
+    {
+        MockHttpServletRequest request = new MockHttpServletRequest( );
+        MockHttpServletResponse response = new MockHttpServletResponse( );
+        MockServletConfig config = new MockServletConfig( );
 
-		//display admin Application management JSP
-		ApplicationJspBean jspbean = new ApplicationJspBean();
-		String html = jspbean.getManageApplications( request );
-		assertNotNull(html);
+        // display admin Application management JSP
+        ApplicationJspBean jspbean = new ApplicationJspBean( );
+        String html = jspbean.getManageApplications( request );
+        assertNotNull( html );
 
-		//display admin Application creation JSP
-		html = jspbean.getCreateApplication( request );
-		assertNotNull(html);
+        // display admin Application creation JSP
+        html = jspbean.getCreateApplication( request );
+        assertNotNull( html );
 
-		//action create Application
-		request = new MockHttpServletRequest();
+        // action create Application
+        request = new MockHttpServletRequest( );
 
-		response = new MockHttpServletResponse( );
-		AdminUser adminUser = new AdminUser( );
-		adminUser.setAccessCode( "admin" );
-		
-        
-        request.addParameter( "name" , NAME1 );
-        request.addParameter( "code" , CODE1 );
-		request.addParameter("action","createApplication");
-        request.addParameter( "token", SecurityTokenService.getInstance( ).getToken( request, "createApplication" ));
-		request.setMethod( "POST" );
-        
-		
-		try 
-		{
-			AdminAuthenticationService.getInstance( ).registerUser(request, adminUser);
-			html = jspbean.processController( request, response ); 
-			
-			
-			// MockResponse object does not redirect, result is always null
-			assertNull( html );
-		}
-		catch (AccessDeniedException e)
-		{
-			fail("access denied");
-		}
-		catch (UserNotSignedException e) 
-		{
-			fail("user not signed in");
-		}
+        response = new MockHttpServletResponse( );
+        AdminUser adminUser = new AdminUser( );
+        adminUser.setAccessCode( "admin" );
 
-		//display modify Application JSP
-		request = new MockHttpServletRequest();
-        request.addParameter( "name" , NAME1 );
-        request.addParameter( "code" , CODE1 );
-		List<Integer> listIds = ApplicationHome.getIdApplicationsList();
+        request.addParameter( "name", NAME1 );
+        request.addParameter( "code", CODE1 );
+        request.addParameter( "action", "createApplication" );
+        request.addParameter( "token", SecurityTokenService.getInstance( ).getToken( request, "createApplication" ) );
+        request.setMethod( "POST" );
+
+        try
+        {
+            AdminAuthenticationService.getInstance( ).registerUser( request, adminUser );
+            html = jspbean.processController( request, response );
+
+            // MockResponse object does not redirect, result is always null
+            assertNull( html );
+        }
+        catch( AccessDeniedException e )
+        {
+            fail( "access denied" );
+        }
+        catch( UserNotSignedException e )
+        {
+            fail( "user not signed in" );
+        }
+
+        // display modify Application JSP
+        request = new MockHttpServletRequest( );
+        request.addParameter( "name", NAME1 );
+        request.addParameter( "code", CODE1 );
+        List<Integer> listIds = ApplicationHome.getIdApplicationsList( );
         assertTrue( !listIds.isEmpty( ) );
         request.addParameter( "id", String.valueOf( listIds.get( 0 ) ) );
-		jspbean = new ApplicationJspBean();
-		
-		assertNotNull( jspbean.getModifyApplication( request ) );	
+        jspbean = new ApplicationJspBean( );
 
-		//action modify Application
-		request = new MockHttpServletRequest();
-		response = new MockHttpServletResponse();
-		
-		adminUser = new AdminUser();
-		adminUser.setAccessCode("admin");
-		
-        request.addParameter( "name" , NAME2 );
-        request.addParameter( "code" , CODE2 );
-		request.setRequestURI("jsp/admin/plugins/example/ManageApplications.jsp");
-		//important pour que MVCController sache quelle action effectuer, sinon, il redirigera vers createApplication, qui est l'action par défaut
-		request.addParameter("action","modifyApplication");
-		request.addParameter( "token", SecurityTokenService.getInstance( ).getToken( request, "modifyApplication" ));
+        assertNotNull( jspbean.getModifyApplication( request ) );
 
-		try 
-		{
-			AdminAuthenticationService.getInstance( ).registerUser(request, adminUser);
-			html = jspbean.processController( request, response );
+        // action modify Application
+        request = new MockHttpServletRequest( );
+        response = new MockHttpServletResponse( );
 
-			// MockResponse object does not redirect, result is always null
-			assertNull( html );
-		}
-		catch (AccessDeniedException e)
-		{
-			fail("access denied");
-		}
-		catch (UserNotSignedException e) 
-		{
-			fail("user not signed in");
-		}
-		
-		//get remove Application
-		request = new MockHttpServletRequest();
-        //request.setRequestURI("jsp/admin/plugins/example/ManageApplications.jsp");
+        adminUser = new AdminUser( );
+        adminUser.setAccessCode( "admin" );
+
+        request.addParameter( "name", NAME2 );
+        request.addParameter( "code", CODE2 );
+        request.setRequestURI( "jsp/admin/plugins/example/ManageApplications.jsp" );
+        // important pour que MVCController sache quelle action effectuer, sinon, il redirigera vers createApplication, qui est l'action par défaut
+        request.addParameter( "action", "modifyApplication" );
+        request.addParameter( "token", SecurityTokenService.getInstance( ).getToken( request, "modifyApplication" ) );
+
+        try
+        {
+            AdminAuthenticationService.getInstance( ).registerUser( request, adminUser );
+            html = jspbean.processController( request, response );
+
+            // MockResponse object does not redirect, result is always null
+            assertNull( html );
+        }
+        catch( AccessDeniedException e )
+        {
+            fail( "access denied" );
+        }
+        catch( UserNotSignedException e )
+        {
+            fail( "user not signed in" );
+        }
+
+        // get remove Application
+        request = new MockHttpServletRequest( );
+        // request.setRequestURI("jsp/admin/plugins/example/ManageApplications.jsp");
         request.addParameter( "id", String.valueOf( listIds.get( 0 ) ) );
-		jspbean = new ApplicationJspBean();
-		request.addParameter("action","confirmRemoveApplication");
-		assertNotNull( jspbean.getModifyApplication( request ) );
-				
-		//do remove Application
-		request = new MockHttpServletRequest();
-		response = new MockHttpServletResponse();
-		request.setRequestURI("jsp/admin/plugins/example/ManageApplicationts.jsp");
-		//important pour que MVCController sache quelle action effectuer, sinon, il redirigera vers createApplication, qui est l'action par défaut
-		request.addParameter("action","removeApplication");
-		request.addParameter( "token", SecurityTokenService.getInstance( ).getToken( request, "removeApplication" ));
-		request.addParameter( "id", String.valueOf( listIds.get( 0 ) ) );
-		request.setMethod("POST");
-		adminUser = new AdminUser();
-		adminUser.setAccessCode("admin");
+        jspbean = new ApplicationJspBean( );
+        request.addParameter( "action", "confirmRemoveApplication" );
+        assertNotNull( jspbean.getModifyApplication( request ) );
 
-		try 
-		{
-			AdminAuthenticationService.getInstance( ).registerUser(request, adminUser);
-			html = jspbean.processController( request, response ); 
+        // do remove Application
+        request = new MockHttpServletRequest( );
+        response = new MockHttpServletResponse( );
+        request.setRequestURI( "jsp/admin/plugins/example/ManageApplicationts.jsp" );
+        // important pour que MVCController sache quelle action effectuer, sinon, il redirigera vers createApplication, qui est l'action par défaut
+        request.addParameter( "action", "removeApplication" );
+        request.addParameter( "token", SecurityTokenService.getInstance( ).getToken( request, "removeApplication" ) );
+        request.addParameter( "id", String.valueOf( listIds.get( 0 ) ) );
+        request.setMethod( "POST" );
+        adminUser = new AdminUser( );
+        adminUser.setAccessCode( "admin" );
 
-			// MockResponse object does not redirect, result is always null
-			assertNull( html );
-		}
-		catch (AccessDeniedException e)
-		{
-			fail("access denied");
-		}
-		catch (UserNotSignedException e) 
-		{
-			fail("user not signed in");
-		}	
-     
-     }
+        try
+        {
+            AdminAuthenticationService.getInstance( ).registerUser( request, adminUser );
+            html = jspbean.processController( request, response );
+
+            // MockResponse object does not redirect, result is always null
+            assertNull( html );
+        }
+        catch( AccessDeniedException e )
+        {
+            fail( "access denied" );
+        }
+        catch( UserNotSignedException e )
+        {
+            fail( "user not signed in" );
+        }
+
+    }
 }
