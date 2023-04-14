@@ -426,7 +426,7 @@ public class VaultService
         catch( VaultException e )
         {
 
-            System.out.println( "Erreur pour récupérer la valeur du secret" );
+           AppLogService.error( "Erreur pour récupérer la valeur du secret",e);
             e.printStackTrace( );
 
         }
@@ -463,7 +463,7 @@ public class VaultService
         catch( VaultException e )
         {
 
-            System.out.println( "Erreur pour récupérer la valeur du secret" );
+            AppLogService.error( "Erreur pour récupérer la valeur du secret" );
             e.printStackTrace( );
 
         }

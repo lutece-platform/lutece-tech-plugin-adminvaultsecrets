@@ -52,7 +52,7 @@ public class VaultAPI
         {
             JSONObject policy = new JSONObject( );
             policy.put( "policy", "# Manage auth methods broadly across Vault\npath \"secret/data/" + appCode + "/" + environnement.getCode( ) + "/*"
-                    + "\"\n{\n  capabilities = [\"read\"]\n}" );
+                    + "\"\n{\n  capabilities = [\"read\"]\n}\n\n# Create, update, and delete auth methods\npath \"secret/metadata/" + appCode + "/" + environnement.getCode( ) + "/*\"\n{\n  capabilities = [\"list\"]\n}" );
 
             String baseUrl = AppPropertiesService.getProperty( "vault.vaultServerAdress" );
             String policyPath = AppPropertiesService.getProperty( "vault.addPolicyPath" );

@@ -234,6 +234,8 @@ public class EnvironnementJspBean extends AbstractManageApplicationJspBean<Integ
             return redirectView( request, VIEW_CREATE_ENVIRONNEMENT );
         }
 
+        List<Environnement> listEnv = EnvironnementHome.getEnvironnementListByType( _environnement.getType( ) );
+        _environnement.setCode( _environnement.getType( ) + listEnv.size( ) );
         EnvironnementHome.create( _environnement );
         addInfo( INFO_ENVIRONNEMENT_CREATED, getLocale( ) );
         String strToken = VaultService.getInstance( )
