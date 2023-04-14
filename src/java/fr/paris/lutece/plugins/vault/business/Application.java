@@ -36,26 +36,28 @@ package fr.paris.lutece.plugins.vault.business;
 import javax.validation.constraints.Size;
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
+
 /**
  * This is the business class for the object Application
- */ 
+ */
 public class Application implements Serializable
 {
     private static final long serialVersionUID = 1L;
 
-    // Variables declarations 
+    // Variables declarations
     private int _nId;
-    
+
     @NotEmpty( message = "#i18n{vault.validation.application.Name.notEmpty}" )
-    @Size( max = 50 , message = "#i18n{vault.validation.application.Name.size}" ) 
+    @Size( max = 50, message = "#i18n{vault.validation.application.Name.size}" )
     private String _strName;
-    
+
     @NotEmpty( message = "#i18n{vault.validation.application.Code.notEmpty}" )
-    @Size( max = 50 , message = "#i18n{vault.validation.application.Code.size}" ) 
+    @Size( max = 50, message = "#i18n{vault.validation.application.Code.size}" )
     private String _strCode;
 
     /**
      * Returns the Id
+     * 
      * @return The Id
      */
     public int getId( )
@@ -65,15 +67,18 @@ public class Application implements Serializable
 
     /**
      * Sets the Id
-     * @param nId The Id
-     */ 
+     * 
+     * @param nId
+     *            The Id
+     */
     public void setId( int nId )
     {
         _nId = nId;
     }
-    
+
     /**
      * Returns the Name
+     * 
      * @return The Name
      */
     public String getName( )
@@ -83,16 +88,18 @@ public class Application implements Serializable
 
     /**
      * Sets the Name
-     * @param strName The Name
-     */ 
+     * 
+     * @param strName
+     *            The Name
+     */
     public void setName( String strName )
     {
         _strName = strName;
     }
-    
-    
+
     /**
      * Returns the Code
+     * 
      * @return The Code
      */
     public String getCode( )
@@ -102,11 +109,13 @@ public class Application implements Serializable
 
     /**
      * Sets the Code
-     * @param strCode The Code
-     */ 
+     * 
+     * @param strCode
+     *            The Code
+     */
     public void setCode( String strCode )
     {
         _strCode = strCode;
     }
-    
+
 }

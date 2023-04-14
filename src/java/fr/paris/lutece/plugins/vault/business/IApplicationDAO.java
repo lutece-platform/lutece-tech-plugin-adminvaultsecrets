@@ -31,11 +31,12 @@
  *
  * License 1.0
  */
- 
+
 package fr.paris.lutece.plugins.vault.business;
 
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.ReferenceList;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -46,22 +47,31 @@ public interface IApplicationDAO
 {
     /**
      * Insert a new record in the table.
-     * @param application instance of the Application object to insert
-     * @param plugin the Plugin
+     *
+     * @param application
+     *            instance of the Application object to insert
+     * @param plugin
+     *            the Plugin
      */
     void insert( Application application, Plugin plugin );
 
     /**
      * Update the record in the table
-     * @param application the reference of the Application
-     * @param plugin the Plugin
+     *
+     * @param application
+     *            the reference of the Application
+     * @param plugin
+     *            the Plugin
      */
     void store( Application application, Plugin plugin );
 
     /**
      * Delete a record from the table
-     * @param nKey The identifier of the Application to delete
-     * @param plugin the Plugin
+     *
+     * @param nKey
+     *            The identifier of the Application to delete
+     * @param plugin
+     *            the Plugin
      */
     void delete( int nKey, Plugin plugin );
 
@@ -70,38 +80,50 @@ public interface IApplicationDAO
 
     /**
      * Load the data from the table
-     * @param nKey The identifier of the application
-     * @param plugin the Plugin
+     *
+     * @param nKey
+     *            The identifier of the application
+     * @param plugin
+     *            the Plugin
      * @return The instance of the application
      */
     Optional<Application> load( int nKey, Plugin plugin );
 
     /**
      * Load the data of all the application objects and returns them as a list
-     * @param plugin the Plugin
+     *
+     * @param plugin
+     *            the Plugin
      * @return The list which contains the data of all the application objects
      */
     List<Application> selectApplicationsList( Plugin plugin );
-    
+
     /**
      * Load the id of all the application objects and returns them as a list
-     * @param plugin the Plugin
+     *
+     * @param plugin
+     *            the Plugin
      * @return The list which contains the id of all the application objects
      */
     List<Integer> selectIdApplicationsList( Plugin plugin );
-    
+
     /**
      * Load the data of all the application objects and returns them as a referenceList
-     * @param plugin the Plugin
+     *
+     * @param plugin
+     *            the Plugin
      * @return The referenceList which contains the data of all the application objects
      */
     ReferenceList selectApplicationsReferenceList( Plugin plugin );
-    
+
     /**
      * Load the data of all the avant objects and returns them as a list
-     * @param plugin the Plugin
-     * @param listIds liste of ids
+     *
+     * @param _plugin
+     *            the plugin
+     * @param listIds
+     *            liste of ids
      * @return The list which contains the data of all the avant objects
      */
-	List<Application> selectApplicationsListByIds( Plugin _plugin, List<Integer> listIds );
+    List<Application> selectApplicationsListByIds( Plugin _plugin, List<Integer> listIds );
 }

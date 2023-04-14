@@ -31,8 +31,7 @@
  *
  * License 1.0
  */
- 	
- 
+
 package fr.paris.lutece.plugins.vault.web;
 
 import com.bettercloud.vault.VaultException;
@@ -59,10 +58,10 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * This class provides the user interface to manage Properties features ( manage, create, modify, remove )
+ * The type Properties jsp bean.
  */
 @Controller( controllerJsp = "ManageProperties.jsp", controllerPath = "jsp/admin/plugins/vault/", right = "VAULT_MANAGEMENT" )
-public class PropertiesJspBean extends AbstractManageApplicationJspBean <Integer, Properties>
+public class PropertiesJspBean extends AbstractManageApplicationJspBean<Integer, Properties>
 {
     // Templates
     private static final String TEMPLATE_MANAGE_PROPERTIES = "/admin/plugins/vault/manage_properties.html";
@@ -70,7 +69,8 @@ public class PropertiesJspBean extends AbstractManageApplicationJspBean <Integer
     private static final String TEMPLATE_MODIFY_PROPERTIES = "/admin/plugins/vault/modify_properties.html";
 
     // Parameters
-    private static final String PARAMETER_ID_PROPERTIES = "id";
+    private static final String PARAMETER_KEY_PROPERTIES = "key";
+
     private static final String PARAMETER_ID_ENVIRONNEMENT = "idEnv";
 
     // Properties for page titles
@@ -81,8 +81,6 @@ public class PropertiesJspBean extends AbstractManageApplicationJspBean <Integer
     // Markers
     private static final String MARK_PROPERTIES_LIST = "properties_list";
     private static final String MARK_PROPERTIES = "properties";
-
-    private static final String JSP_MANAGE_PROPERTIES = "jsp/admin/plugins/vault/ManageProperties.jsp";
 
     // Properties
     private static final String MESSAGE_CONFIRM_REMOVE_PROPERTIES = "vault.message.confirmRemoveProperties";
@@ -105,101 +103,96 @@ public class PropertiesJspBean extends AbstractManageApplicationJspBean <Integer
     private static final String INFO_PROPERTIES_CREATED = "vault.info.properties.created";
     private static final String INFO_PROPERTIES_UPDATED = "vault.info.properties.updated";
     private static final String INFO_PROPERTIES_REMOVED = "vault.info.properties.removed";
-    
+
     // Errors
     private static final String ERROR_RESOURCE_NOT_FOUND = "Resource not found";
-    
+
     // Session variable to store working values
     private Properties _properties;
     private List<Integer> _listIdProperties;
-    
+    private List<Properties> _listProperties;
+
     /**
-     * Build the Manage View
-     * @param request The HTTP request
-     * @return The page
+     * Gets manage properties.
+     *
+     * @param request
+     *            the request
+     * @return the manage properties
      */
     @View( value = VIEW_MANAGE_PROPERTIES, defaultView = true )
     public String getManageProperties( HttpServletRequest request )
     {
         _properties = null;
+        _listProperties = new ArrayList<>( );
 
         int nId = Integer.parseInt( request.getParameter( PARAMETER_ID_ENVIRONNEMENT ) );
-        Application _application = ApplicationHome.findByPrimaryKey(EnvironnementHome.findByPrimaryKey(nId).get().getIdapplication()).get();
-        Environnement _environnement = EnvironnementHome.findByPrimaryKey(nId).get();
+        Environnement _environnement = EnvironnementHome.findByPrimaryKey( nId ).get( );
 
-        if ( request.getParameter( AbstractPaginator.PARAMETER_PAGE_INDEX) == null || _listIdProperties.isEmpty( ) )
+        if ( EnvironnementHome.getPropertiesList( _environnement.getId( ) ) != null )
         {
-        	_listIdProperties = PropertiesHome.getIdPropertiesListByEnv( nId );
+            _listProperties = ( EnvironnementHome.getPropertiesList( _environnement.getId( ) ) );
         }
-
-        System.out.println(VaultService.getInstance().getSecretsByEnv(_application, _environnement));
-        VaultService.getInstance().getSecretsByEnv(_application, _environnement).forEach(x->System.out.println(x.getId() + " - " + x.getValue()));
-        Map<String, Object> model = getPaginatedListModel( request, MARK_PROPERTIES_LIST, _listIdProperties, JSP_MANAGE_PROPERTIES );
-        model.put(EnvironnementJspBean.MARK_ENVIRONNEMENT, EnvironnementHome.findByPrimaryKey(nId).get());
+        // Map<String, Object> model = getPaginatedListModel( request, MARK_PROPERTIES_LIST, _listIdProperties, JSP_MANAGE_PROPERTIES );
+        Map<String, Object> model = getModel( );
+        model.put( MARK_PROPERTIES_LIST, _listProperties );
+        model.put( EnvironnementJspBean.MARK_ENVIRONNEMENT, EnvironnementHome.findByPrimaryKey( nId ).get( ) );
         return getPage( PROPERTY_PAGE_TITLE_MANAGE_PROPERTIES, TEMPLATE_MANAGE_PROPERTIES, model );
     }
 
-	/**
+    /**
      * Get Items from Ids list
+     *
      * @param listIds
      * @return the populated list of items corresponding to the id List
      */
-	@Override
-	List<Properties> getItemsFromIds( List<Integer> listIds ) 
-	{
-		List<Properties> listProperties = PropertiesHome.getPropertiesListByIds( listIds );
-		
-		// keep original order
-        return listProperties.stream()
-                 .sorted(Comparator.comparingInt( notif -> listIds.indexOf( notif.getId())))
-                 .collect(Collectors.toList());
-	}
-    
-    /**
-    * reset the _listIdProperties list
-    */
     public void resetListId( )
     {
-    	_listIdProperties = new ArrayList<>( );
+        _listIdProperties = new ArrayList<>( );
     }
 
     /**
-     * Returns the form to create a properties
+     * Gets create properties.
      *
-     * @param request The Http request
-     * @return the html code of the properties form
+     * @param request
+     *            the request
+     * @return the create properties
      */
     @View( VIEW_CREATE_PROPERTIES )
     public String getCreateProperties( HttpServletRequest request )
     {
-        int nId = Integer.parseInt(request.getParameter(PARAMETER_ID_ENVIRONNEMENT));
+        int nId = Integer.parseInt( request.getParameter( PARAMETER_ID_ENVIRONNEMENT ) );
 
-        _properties = ( _properties != null ) ? _properties : new Properties(  );
+        _properties = ( _properties != null ) ? _properties : new Properties( );
 
-        Map<String, Object> model = getModel(  );
+        Map<String, Object> model = getModel( );
         model.put( MARK_PROPERTIES, _properties );
         model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_CREATE_PROPERTIES ) );
-        model.put(EnvironnementJspBean.MARK_ENVIRONNEMENT, EnvironnementHome.findByPrimaryKey(nId).get());
+        model.put( EnvironnementJspBean.MARK_ENVIRONNEMENT, EnvironnementHome.findByPrimaryKey( nId ).get( ) );
 
         return getPage( PROPERTY_PAGE_TITLE_CREATE_PROPERTIES, TEMPLATE_CREATE_PROPERTIES, model );
     }
 
     /**
-     * Process the data capture form of a new properties
+     * Do create properties string.
      *
-     * @param request The Http Request
-     * @return The Jsp URL of the process result
+     * @param request
+     *            the request
+     * @return the string
      * @throws AccessDeniedException
+     *             the access denied exception
+     * @throws VaultException
+     *             the vault exception
      */
     @Action( ACTION_CREATE_PROPERTIES )
-    public String doCreateProperties( HttpServletRequest request ) throws AccessDeniedException, VaultException {
+    public String doCreateProperties( HttpServletRequest request ) throws AccessDeniedException, VaultException
+    {
         populate( _properties, request, getLocale( ) );
 
-        int nId = Integer.parseInt(request.getParameter(PARAMETER_ID_ENVIRONNEMENT));
-        int nIdApp = EnvironnementHome.findByPrimaryKey(nId).get().getIdapplication();
+        int nId = Integer.parseInt( request.getParameter( PARAMETER_ID_ENVIRONNEMENT ) );
+        int nIdApp = EnvironnementHome.findByPrimaryKey( nId ).get( ).getIdapplication( );
         if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_CREATE_PROPERTIES ) )
         {
-            throw new AccessDeniedException ( "Invalid security token" );
+            throw new AccessDeniedException( "Invalid security token" );
         }
 
         // Check constraints
@@ -209,113 +202,123 @@ public class PropertiesJspBean extends AbstractManageApplicationJspBean <Integer
         }
 
         PropertiesHome.create( _properties );
-        addInfo( INFO_PROPERTIES_CREATED, getLocale(  ) );
-        VaultService.getInstance().writeSecret(_properties.getKey(),_properties.getValue(), ApplicationHome.findByPrimaryKey(nIdApp).get().getCode(), EnvironnementHome.findByPrimaryKey(nId).get().getCode());
+        addInfo( INFO_PROPERTIES_CREATED, getLocale( ) );
         resetListId( );
 
-        return redirect( request, VIEW_MANAGE_PROPERTIES, PARAMETER_ID_ENVIRONNEMENT, _properties.getIdenvironnement());
+        return redirect( request, VIEW_MANAGE_PROPERTIES, PARAMETER_ID_ENVIRONNEMENT, _properties.getIdenvironnement( ) );
     }
 
     /**
-     * Manages the removal form of a properties whose identifier is in the http
-     * request
+     * Gets confirm remove properties.
      *
-     * @param request The Http request
-     * @return the html code to confirm
+     * @param request
+     *            the request
+     * @return the confirm remove properties
      */
     @Action( ACTION_CONFIRM_REMOVE_PROPERTIES )
     public String getConfirmRemoveProperties( HttpServletRequest request )
     {
-        int nId = Integer.parseInt( request.getParameter( PARAMETER_ID_PROPERTIES ) );
+        int nId = Integer.parseInt( request.getParameter( PARAMETER_ID_ENVIRONNEMENT ) );
+        String nKey = request.getParameter( PARAMETER_KEY_PROPERTIES );
         UrlItem url = new UrlItem( getActionUrl( ACTION_REMOVE_PROPERTIES ) );
-        url.addParameter( PARAMETER_ID_PROPERTIES, nId );
+        url.addParameter( PARAMETER_ID_ENVIRONNEMENT, nId );
+        url.addParameter( PARAMETER_KEY_PROPERTIES, nKey );
 
-        String strMessageUrl = AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_REMOVE_PROPERTIES, url.getUrl(  ), AdminMessage.TYPE_CONFIRMATION );
+        String strMessageUrl = AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_REMOVE_PROPERTIES, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
 
         return redirect( request, strMessageUrl );
     }
 
     /**
-     * Handles the removal form of a properties
+     * Do remove properties string.
      *
-     * @param request The Http request
-     * @return the jsp URL to display the form to manage properties
+     * @param request
+     *            the request
+     * @return the string
+     * @throws VaultException
+     *             the vault exception
      */
     @Action( ACTION_REMOVE_PROPERTIES )
-    public String doRemoveProperties( HttpServletRequest request ) throws VaultException {
-        int nId = Integer.parseInt( request.getParameter( PARAMETER_ID_PROPERTIES ) );
-        int nIdEnv = PropertiesHome.findByPrimaryKey(nId).get().getIdenvironnement();
-        int nIdApp = EnvironnementHome.findByPrimaryKey(nIdEnv).get().getIdapplication();
+    public String doRemoveProperties( HttpServletRequest request ) throws VaultException
+    {
+        int nIdEnv = Integer.parseInt( request.getParameter( PARAMETER_ID_ENVIRONNEMENT ) );
+        String nCode = request.getParameter( PARAMETER_KEY_PROPERTIES );
 
-        if ( _properties == null || ( _properties.getId(  ) != nId ) )
+        if ( _properties == null )
         {
-            Optional<Properties> optProperties = PropertiesHome.findByPrimaryKey( nId );
-            _properties = optProperties.orElseThrow( ( ) -> new AppException(ERROR_RESOURCE_NOT_FOUND ) );
+            Optional<Properties> optProperties = Optional.ofNullable( PropertiesHome.getPropertiesByEnvIdAndCode( nIdEnv, nCode ) );
+            _properties = optProperties.orElseThrow( ( ) -> new AppException( ERROR_RESOURCE_NOT_FOUND ) );
         }
 
-        VaultService.getInstance().deleteSecret(_properties.getKey(), ApplicationHome.findByPrimaryKey(nIdApp).get().getCode(), EnvironnementHome.findByPrimaryKey(nIdEnv).get().getCode());
-        PropertiesHome.remove( nId );
-        addInfo( INFO_PROPERTIES_REMOVED, getLocale(  ) );
+        PropertiesHome.remove( _properties );
+        addInfo( INFO_PROPERTIES_REMOVED, getLocale( ) );
         resetListId( );
 
-        return redirect( request, VIEW_MANAGE_PROPERTIES, PARAMETER_ID_ENVIRONNEMENT, nIdEnv);
+        return redirect( request, VIEW_MANAGE_PROPERTIES, PARAMETER_ID_ENVIRONNEMENT, nIdEnv );
     }
 
     /**
-     * Returns the form to update info about a properties
+     * Gets modify properties.
      *
-     * @param request The Http request
-     * @return The HTML form to update info
+     * @param request
+     *            the request
+     * @return the modify properties
      */
     @View( VIEW_MODIFY_PROPERTIES )
     public String getModifyProperties( HttpServletRequest request )
     {
-        int nId = Integer.parseInt( request.getParameter( PARAMETER_ID_PROPERTIES ) );
-
-        if ( _properties == null || ( _properties.getId(  ) != nId ) )
+        int nIdEnv = Integer.parseInt( request.getParameter( PARAMETER_ID_ENVIRONNEMENT ) );
+        String nCode = request.getParameter( PARAMETER_KEY_PROPERTIES );
+        if ( _properties == null )
         {
-            Optional<Properties> optProperties = PropertiesHome.findByPrimaryKey( nId );
-            _properties = optProperties.orElseThrow( ( ) -> new AppException(ERROR_RESOURCE_NOT_FOUND ) );
+            Optional<Properties> optProperties = Optional.ofNullable( PropertiesHome.getPropertiesByEnvIdAndCode( nIdEnv, nCode ) );
+            _properties = optProperties.orElseThrow( ( ) -> new AppException( ERROR_RESOURCE_NOT_FOUND ) );
         }
 
-
-        Map<String, Object> model = getModel(  );
+        System.out.println( _properties.getKey( ) );
+        Map<String, Object> model = getModel( );
         model.put( MARK_PROPERTIES, _properties );
         model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_MODIFY_PROPERTIES ) );
-        model.put(EnvironnementJspBean.MARK_ENVIRONNEMENT, EnvironnementHome.findByPrimaryKey(_properties.getIdenvironnement()).get());
-
+        model.put( EnvironnementJspBean.MARK_ENVIRONNEMENT, EnvironnementHome.findByPrimaryKey( _properties.getIdenvironnement( ) ).get( ) );
 
         return getPage( PROPERTY_PAGE_TITLE_MODIFY_PROPERTIES, TEMPLATE_MODIFY_PROPERTIES, model );
     }
 
     /**
-     * Process the change form of a properties
+     * Do modify properties string.
      *
-     * @param request The Http request
-     * @return The Jsp URL of the process result
+     * @param request
+     *            the request
+     * @return the string
      * @throws AccessDeniedException
+     *             the access denied exception
+     * @throws VaultException
+     *             the vault exception
      */
     @Action( ACTION_MODIFY_PROPERTIES )
-    public String doModifyProperties( HttpServletRequest request ) throws AccessDeniedException
-    {   
+    public String doModifyProperties( HttpServletRequest request ) throws AccessDeniedException, VaultException
+    {
         populate( _properties, request, getLocale( ) );
-		
-		
+
         if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_MODIFY_PROPERTIES ) )
         {
-            throw new AccessDeniedException ( "Invalid security token" );
+            throw new AccessDeniedException( "Invalid security token" );
         }
 
         // Check constraints
         if ( !validateBean( _properties, VALIDATION_ATTRIBUTES_PREFIX ) )
         {
-            return redirect( request, VIEW_MODIFY_PROPERTIES, PARAMETER_ID_PROPERTIES, _properties.getId( ) );
         }
-
         PropertiesHome.update( _properties );
-        addInfo( INFO_PROPERTIES_UPDATED, getLocale(  ) );
+        addInfo( INFO_PROPERTIES_UPDATED, getLocale( ) );
         resetListId( );
 
-        return redirect( request, VIEW_MANAGE_PROPERTIES, PARAMETER_ID_ENVIRONNEMENT, _properties.getIdenvironnement());
+        return redirect( request, VIEW_MANAGE_PROPERTIES, PARAMETER_ID_ENVIRONNEMENT, _properties.getIdenvironnement( ) );
+    }
+
+    @Override
+    List<Properties> getItemsFromIds( List<Integer> listIds )
+    {
+        return null;
     }
 }

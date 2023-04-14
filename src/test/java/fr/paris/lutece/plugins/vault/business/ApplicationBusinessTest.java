@@ -28,16 +28,14 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- *"
+ *
  * License 1.0
  */
-
 package fr.paris.lutece.plugins.vault.business;
 
 import fr.paris.lutece.test.LuteceTestCase;
 
 import java.util.Optional;
-
 
 /**
  * This is the business class test for the object Application
@@ -49,32 +47,32 @@ public class ApplicationBusinessTest extends LuteceTestCase
     private static final String CODE1 = "Code1";
     private static final String CODE2 = "Code2";
 
-	/**
-	* test Application
-	*/
-    public void testBusiness(  )
+    /**
+     * test Application
+     */
+    public void testBusiness( )
     {
         // Initialize an object
-        Application application = new Application();
+        Application application = new Application( );
         application.setName( NAME1 );
         application.setCode( CODE1 );
 
         // Create test
         ApplicationHome.create( application );
         Optional<Application> optApplicationStored = ApplicationHome.findByPrimaryKey( application.getId( ) );
-        Application applicationStored = optApplicationStored.orElse( new Application ( ) );
-        assertEquals( applicationStored.getName( ) , application.getName( ) );
-        assertEquals( applicationStored.getCode( ) , application.getCode( ) );
+        Application applicationStored = optApplicationStored.orElse( new Application( ) );
+        assertEquals( applicationStored.getName( ), application.getName( ) );
+        assertEquals( applicationStored.getCode( ), application.getCode( ) );
 
         // Update test
         application.setName( NAME2 );
         application.setCode( CODE2 );
         ApplicationHome.update( application );
         optApplicationStored = ApplicationHome.findByPrimaryKey( application.getId( ) );
-        applicationStored = optApplicationStored.orElse( new Application ( ) );
-        
-        assertEquals( applicationStored.getName( ) , application.getName( ) );
-        assertEquals( applicationStored.getCode( ) , application.getCode( ) );
+        applicationStored = optApplicationStored.orElse( new Application( ) );
+
+        assertEquals( applicationStored.getName( ), application.getName( ) );
+        assertEquals( applicationStored.getCode( ), application.getCode( ) );
 
         // List test
         ApplicationHome.getApplicationsList( );
@@ -84,10 +82,7 @@ public class ApplicationBusinessTest extends LuteceTestCase
         optApplicationStored = ApplicationHome.findByPrimaryKey( application.getId( ) );
         applicationStored = optApplicationStored.orElse( null );
         assertNull( applicationStored );
-        
+
     }
-    
-    
-     
 
 }

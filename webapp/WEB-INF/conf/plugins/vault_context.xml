@@ -6,7 +6,6 @@
 
     <bean id="vault.applicationDAO" class="fr.paris.lutece.plugins.vault.business.ApplicationDAO" />
     <bean id="vault.environnementDAO" class="fr.paris.lutece.plugins.vault.business.EnvironnementDAO" />
-    <bean id="vault.propertiesDAO" class="fr.paris.lutece.plugins.vault.business.PropertiesDAO" />
 
 
 </beans>

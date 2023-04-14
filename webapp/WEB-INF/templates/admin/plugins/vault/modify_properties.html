@@ -7,16 +7,14 @@
 	<@boxBody>
     <@tform class="form-horizontal" method="post" name="modify_properties" action="jsp/admin/plugins/vault/ManageProperties.jsp" >
 			<@messages errors=errors />
-			<@input type="hidden" id="id" name="id" value="${properties.id}"/>
 			<@input type="hidden" value="${token}" name="token" />
 			<@input type="hidden" value="${environnement.id}" name="idEnv" />
+			<@input type='hidden' id='key' name='key'  maxlength=50 value='${properties.key!\'\'}' tabIndex='0' />
 
-			<@formGroup labelFor='key' labelKey='#i18n{vault.modify_properties.labelKey}' mandatory=true>
-				<@input type='text' id='key' name='key'  maxlength=50 value='${properties.key!\'\'}' tabIndex='0' />
-			</@formGroup>
 			<@formGroup labelFor='value' labelKey='#i18n{vault.modify_properties.labelValue}' mandatory=true>
 				<@input type='text' id='value' name='value'  maxlength=50 value='${properties.value!\'\'}' tabIndex='1' />
 			</@formGroup>
+
 			<@input type='hidden' id='idenvironnement' name='idenvironnement'  value='${environnement.id!\'\'}' tabIndex='2' />
 
         <@actionButtons button1Name="action_modifyProperties" button2Name="view_manageProperties"/>

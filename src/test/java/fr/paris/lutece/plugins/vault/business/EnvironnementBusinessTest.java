@@ -28,16 +28,16 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- *"
+ *
  * License 1.0
  */
-
 package fr.paris.lutece.plugins.vault.business;
 
 import fr.paris.lutece.test.LuteceTestCase;
 
 import java.util.Optional;
 
+import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
 
 /**
  * This is the business class test for the object Environnement
@@ -51,13 +51,13 @@ public class EnvironnementBusinessTest extends LuteceTestCase
     private static final int IDAPPLICATION1 = 1;
     private static final int IDAPPLICATION2 = 2;
 
-	/**
-	* test Environnement
-	*/
-    public void testBusiness(  )
+    /**
+     * test Environnement
+     */
+    public void testBusiness( )
     {
         // Initialize an object
-        Environnement environnement = new Environnement();
+        Environnement environnement = new Environnement( );
         environnement.setCode( CODE1 );
         environnement.setToken( TOKEN1 );
         environnement.setIdapplication( IDAPPLICATION1 );
@@ -65,10 +65,10 @@ public class EnvironnementBusinessTest extends LuteceTestCase
         // Create test
         EnvironnementHome.create( environnement );
         Optional<Environnement> optEnvironnementStored = EnvironnementHome.findByPrimaryKey( environnement.getId( ) );
-        Environnement environnementStored = optEnvironnementStored.orElse( new Environnement ( ) );
-        assertEquals( environnementStored.getCode( ) , environnement.getCode( ) );
-        assertEquals( environnementStored.getToken( ) , environnement.getToken( ) );
-        assertEquals( environnementStored.getIdapplication( ) , environnement.getIdapplication( ) );
+        Environnement environnementStored = optEnvironnementStored.orElse( new Environnement( ) );
+        assertEquals( environnementStored.getCode( ), environnement.getCode( ) );
+        assertEquals( environnementStored.getToken( ), environnement.getToken( ) );
+        assertEquals( environnementStored.getIdapplication( ), environnement.getIdapplication( ) );
 
         // Update test
         environnement.setCode( CODE2 );
@@ -76,11 +76,11 @@ public class EnvironnementBusinessTest extends LuteceTestCase
         environnement.setIdapplication( IDAPPLICATION2 );
         EnvironnementHome.update( environnement );
         optEnvironnementStored = EnvironnementHome.findByPrimaryKey( environnement.getId( ) );
-        environnementStored = optEnvironnementStored.orElse( new Environnement ( ) );
-        
-        assertEquals( environnementStored.getCode( ) , environnement.getCode( ) );
-        assertEquals( environnementStored.getToken( ) , environnement.getToken( ) );
-        assertEquals( environnementStored.getIdapplication( ) , environnement.getIdapplication( ) );
+        environnementStored = optEnvironnementStored.orElse( new Environnement( ) );
+
+        assertEquals( environnementStored.getCode( ), environnement.getCode( ) );
+        assertEquals( environnementStored.getToken( ), environnement.getToken( ) );
+        assertEquals( environnementStored.getIdapplication( ), environnement.getIdapplication( ) );
 
         // List test
         EnvironnementHome.getEnvironnementsList( );
@@ -90,10 +90,7 @@ public class EnvironnementBusinessTest extends LuteceTestCase
         optEnvironnementStored = EnvironnementHome.findByPrimaryKey( environnement.getId( ) );
         environnementStored = optEnvironnementStored.orElse( null );
         assertNull( environnementStored );
-        
+
     }
-    
-    
-     
 
 }

@@ -28,16 +28,17 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- *"
+ *
  * License 1.0
  */
-
 package fr.paris.lutece.plugins.vault.business;
 
+import com.bettercloud.vault.VaultException;
 import fr.paris.lutece.test.LuteceTestCase;
 
 import java.util.Optional;
 
+import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
 
 /**
  * This is the business class test for the object Properties
@@ -51,49 +52,46 @@ public class PropertiesBusinessTest extends LuteceTestCase
     private static final int IDENVIRONNEMENT1 = 1;
     private static final int IDENVIRONNEMENT2 = 2;
 
-	/**
-	* test Properties
-	*/
-    public void testBusiness(  )
+    /**
+     * test Properties
+     */
+    public void testBusiness( ) throws VaultException
     {
         // Initialize an object
-        Properties properties = new Properties();
+        Properties properties = new Properties( );
         properties.setKey( KEY1 );
         properties.setValue( VALUE1 );
         properties.setIdenvironnement( IDENVIRONNEMENT1 );
 
         // Create test
         PropertiesHome.create( properties );
-        Optional<Properties> optPropertiesStored = PropertiesHome.findByPrimaryKey( properties.getId( ) );
-        Properties propertiesStored = optPropertiesStored.orElse( new Properties ( ) );
-        assertEquals( propertiesStored.getKey( ) , properties.getKey( ) );
-        assertEquals( propertiesStored.getValue( ) , properties.getValue( ) );
-        assertEquals( propertiesStored.getIdenvironnement( ) , properties.getIdenvironnement( ) );
+        Optional<Properties> optPropertiesStored = Optional
+                .ofNullable( PropertiesHome.getPropertiesByEnvIdAndCode( properties.getIdenvironnement( ), properties.getKey( ) ) );
+        Properties propertiesStored = optPropertiesStored.orElse( new Properties( ) );
+        assertEquals( propertiesStored.getKey( ), properties.getKey( ) );
+        assertEquals( propertiesStored.getValue( ), properties.getValue( ) );
+        assertEquals( propertiesStored.getIdenvironnement( ), properties.getIdenvironnement( ) );
 
         // Update test
         properties.setKey( KEY2 );
         properties.setValue( VALUE2 );
         properties.setIdenvironnement( IDENVIRONNEMENT2 );
         PropertiesHome.update( properties );
-        optPropertiesStored = PropertiesHome.findByPrimaryKey( properties.getId( ) );
-        propertiesStored = optPropertiesStored.orElse( new Properties ( ) );
-        
-        assertEquals( propertiesStored.getKey( ) , properties.getKey( ) );
-        assertEquals( propertiesStored.getValue( ) , properties.getValue( ) );
-        assertEquals( propertiesStored.getIdenvironnement( ) , properties.getIdenvironnement( ) );
+        propertiesStored = optPropertiesStored.orElse( new Properties( ) );
+
+        assertEquals( propertiesStored.getKey( ), properties.getKey( ) );
+        assertEquals( propertiesStored.getValue( ), properties.getValue( ) );
+        assertEquals( propertiesStored.getIdenvironnement( ), properties.getIdenvironnement( ) );
 
         // List test
-        PropertiesHome.getPropertiesList( );
+        EnvironnementHome.getPropertiesList( properties.getIdenvironnement( ) );
 
         // Delete test
-        PropertiesHome.remove( properties.getId( ) );
-        optPropertiesStored = PropertiesHome.findByPrimaryKey( properties.getId( ) );
+        PropertiesHome.remove( properties );
+        optPropertiesStored = Optional.ofNullable( PropertiesHome.getPropertiesByEnvIdAndCode( properties.getIdenvironnement( ), properties.getKey( ) ) );
         propertiesStored = optPropertiesStored.orElse( null );
         assertNull( propertiesStored );
-        
+
     }
-    
-    
-     
 
 }

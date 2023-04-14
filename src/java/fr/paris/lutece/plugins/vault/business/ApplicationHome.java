@@ -32,20 +32,18 @@
  * License 1.0
  */
 
-
- package fr.paris.lutece.plugins.vault.business;
+package fr.paris.lutece.plugins.vault.business;
 
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.util.ReferenceList;
 
-
 import java.util.List;
 import java.util.Optional;
 
 /**
- * This class provides instances management methods (create, find, ...) for Application objects
+ * The type Application home.
  */
 public final class ApplicationHome
 {
@@ -53,17 +51,16 @@ public final class ApplicationHome
     private static IApplicationDAO _dao = SpringContextService.getBean( "vault.applicationDAO" );
     private static Plugin _plugin = PluginService.getPlugin( "vault" );
 
-    /**
-     * Private constructor - this class need not be instantiated
-     */
-    private ApplicationHome(  )
+    private ApplicationHome( )
     {
     }
 
     /**
-     * Create an instance of the application class
-     * @param application The instance of the Application which contains the informations to store
-     * @return The  instance of application which has been created with its primary key.
+     * Create application.
+     *
+     * @param application
+     *            the application
+     * @return the application
      */
     public static Application create( Application application )
     {
@@ -73,9 +70,11 @@ public final class ApplicationHome
     }
 
     /**
-     * Update of the application which is specified in parameter
-     * @param application The instance of the Application which contains the data to store
-     * @return The instance of the  application which has been updated
+     * Update application.
+     *
+     * @param application
+     *            the application
+     * @return the application
      */
     public static Application update( Application application )
     {
@@ -85,8 +84,10 @@ public final class ApplicationHome
     }
 
     /**
-     * Remove the application whose identifier is specified in parameter
-     * @param nKey The application Id
+     * Remove.
+     *
+     * @param nKey
+     *            the n key
      */
     public static void remove( int nKey )
     {
@@ -94,9 +95,11 @@ public final class ApplicationHome
     }
 
     /**
-     * Returns an instance of a application whose identifier is specified in parameter
-     * @param nKey The application primary key
-     * @return an instance of Application
+     * Find by primary key optional.
+     *
+     * @param nKey
+     *            the n key
+     * @return the optional
      */
     public static Optional<Application> findByPrimaryKey( int nKey )
     {
@@ -104,37 +107,41 @@ public final class ApplicationHome
     }
 
     /**
-     * Load the data of all the application objects and returns them as a list
-     * @return the list which contains the data of all the application objects
+     * Gets applications list.
+     *
+     * @return the applications list
      */
     public static List<Application> getApplicationsList( )
     {
         return _dao.selectApplicationsList( _plugin );
     }
-    
+
     /**
-     * Load the id of all the application objects and returns them as a list
-     * @return the list which contains the id of all the application objects
+     * Gets id applications list.
+     *
+     * @return the id applications list
      */
     public static List<Integer> getIdApplicationsList( )
     {
         return _dao.selectIdApplicationsList( _plugin );
     }
-    
+
     /**
-     * Load the data of all the application objects and returns them as a referenceList
-     * @return the referenceList which contains the data of all the application objects
+     * Gets applications reference list.
+     *
+     * @return the applications reference list
      */
     public static ReferenceList getApplicationsReferenceList( )
     {
         return _dao.selectApplicationsReferenceList( _plugin );
     }
-    
-	
+
     /**
-     * Load the data of all the avant objects and returns them as a list
-     * @param listIds liste of ids
-     * @return the list which contains the data of all the avant objects
+     * Gets applications list by ids.
+     *
+     * @param listIds
+     *            the list ids
+     * @return the applications list by ids
      */
     public static List<Application> getApplicationsListByIds( List<Integer> listIds )
     {
@@ -142,4 +149,3 @@ public final class ApplicationHome
     }
 
 }
-

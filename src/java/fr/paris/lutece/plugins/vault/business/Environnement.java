@@ -39,29 +39,34 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * This is the business class for the object Environnement
- */ 
+ * The type Environnement.
+ */
 public class Environnement implements Serializable
 {
     private static final long serialVersionUID = 1L;
 
-    // Variables declarations 
+    // Variables declarations
     private int _nId;
-    
-    @NotEmpty( message = "#i18n{vault.validation.environnement.Code.notEmpty}" )
-    @Size( max = 50 , message = "#i18n{vault.validation.environnement.Code.size}" ) 
+
+    @Size( max = 50, message = "#i18n{vault.validation.environnement.Code.size}" )
     private String _strCode;
-    
+
     @NotEmpty( message = "#i18n{vault.validation.environnement.Token.notEmpty}" )
-    @Size( max = 50 , message = "#i18n{vault.validation.environnement.Token.size}" ) 
+    @Size( max = 50, message = "#i18n{vault.validation.environnement.Token.size}" )
     private String _strToken;
-    
+
+    private String _strPath;
+
     private int _nIdapplication;
 
+    private String _strType;
+
+    private List<Properties> _listProperties;
 
     /**
-     * Returns the Id
-     * @return The Id
+     * Gets id.
+     *
+     * @return the id
      */
     public int getId( )
     {
@@ -69,17 +74,20 @@ public class Environnement implements Serializable
     }
 
     /**
-     * Sets the Id
-     * @param nId The Id
-     */ 
+     * Sets id.
+     *
+     * @param nId
+     *            the n id
+     */
     public void setId( int nId )
     {
         _nId = nId;
     }
-    
+
     /**
-     * Returns the Code
-     * @return The Code
+     * Gets code.
+     *
+     * @return the code
      */
     public String getCode( )
     {
@@ -87,18 +95,20 @@ public class Environnement implements Serializable
     }
 
     /**
-     * Sets the Code
-     * @param strCode The Code
-     */ 
+     * Sets code.
+     *
+     * @param strCode
+     *            the str code
+     */
     public void setCode( String strCode )
     {
         _strCode = strCode;
     }
-    
-    
+
     /**
-     * Returns the Token
-     * @return The Token
+     * Gets token.
+     *
+     * @return the token
      */
     public String getToken( )
     {
@@ -106,18 +116,20 @@ public class Environnement implements Serializable
     }
 
     /**
-     * Sets the Token
-     * @param strToken The Token
-     */ 
+     * Sets token.
+     *
+     * @param strToken
+     *            the str token
+     */
     public void setToken( String strToken )
     {
         _strToken = strToken;
     }
-    
-    
+
     /**
-     * Returns the Idapplication
-     * @return The Idapplication
+     * Gets idapplication.
+     *
+     * @return the idapplication
      */
     public int getIdapplication( )
     {
@@ -125,12 +137,76 @@ public class Environnement implements Serializable
     }
 
     /**
-     * Sets the Idapplication
-     * @param nIdapplication The Idapplication
-     */ 
+     * Sets idapplication.
+     *
+     * @param nIdapplication
+     *            the n idapplication
+     */
     public void setIdapplication( int nIdapplication )
     {
         _nIdapplication = nIdapplication;
     }
 
+    /**
+     * Gets path.
+     *
+     * @return the path
+     */
+    public String getPath( )
+    {
+        return _strPath;
+    }
+
+    /**
+     * Sets path.
+     *
+     * @param _strPath
+     *            the str path
+     */
+    public void setPath( String _strPath )
+    {
+        this._strPath = _strPath;
+    }
+
+    /**
+     * Gets type.
+     *
+     * @return the type
+     */
+    public String getType( )
+    {
+        return _strType;
+    }
+
+    /**
+     * Sets type.
+     *
+     * @param _strType
+     *            the str type
+     */
+    public void setType( String _strType )
+    {
+        this._strType = _strType;
+    }
+
+    /**
+     * Gets list properties.
+     *
+     * @return the list properties
+     */
+    public List<Properties> getListProperties( )
+    {
+        return _listProperties;
+    }
+
+    /**
+     * Sets list properties.
+     *
+     * @param _listProperties
+     *            the list properties
+     */
+    public void setListProperties( List<Properties> _listProperties )
+    {
+        this._listProperties = _listProperties;
+    }
 }

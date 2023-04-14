@@ -31,7 +31,7 @@
  *
  * License 1.0
  */
- 
+
 package fr.paris.lutece.plugins.vault.business;
 
 import fr.paris.lutece.portal.service.plugin.Plugin;
@@ -46,22 +46,31 @@ public interface IPropertiesDAO
 {
     /**
      * Insert a new record in the table.
-     * @param properties instance of the Properties object to insert
-     * @param plugin the Plugin
+     * 
+     * @param properties
+     *            instance of the Properties object to insert
+     * @param plugin
+     *            the Plugin
      */
     void insert( Properties properties, Plugin plugin );
 
     /**
      * Update the record in the table
-     * @param properties the reference of the Properties
-     * @param plugin the Plugin
+     * 
+     * @param properties
+     *            the reference of the Properties
+     * @param plugin
+     *            the Plugin
      */
     void store( Properties properties, Plugin plugin );
 
     /**
      * Delete a record from the table
-     * @param nKey The identifier of the Properties to delete
-     * @param plugin the Plugin
+     * 
+     * @param nKey
+     *            The identifier of the Properties to delete
+     * @param plugin
+     *            the Plugin
      */
     void delete( int nKey, Plugin plugin );
 
@@ -70,40 +79,52 @@ public interface IPropertiesDAO
 
     /**
      * Load the data from the table
-     * @param nKey The identifier of the properties
-     * @param plugin the Plugin
+     * 
+     * @param nKey
+     *            The identifier of the properties
+     * @param plugin
+     *            the Plugin
      * @return The instance of the properties
      */
     Optional<Properties> load( int nKey, Plugin plugin );
 
     /**
      * Load the data of all the properties objects and returns them as a list
-     * @param plugin the Plugin
+     * 
+     * @param plugin
+     *            the Plugin
      * @return The list which contains the data of all the properties objects
      */
     List<Properties> selectPropertiesList( Plugin plugin );
-    
+
     /**
      * Load the id of all the properties objects and returns them as a list
-     * @param plugin the Plugin
+     * 
+     * @param plugin
+     *            the Plugin
      * @return The list which contains the id of all the properties objects
      */
     List<Integer> selectIdPropertiesList( Plugin plugin );
-    
+
     /**
      * Load the data of all the properties objects and returns them as a referenceList
-     * @param plugin the Plugin
+     * 
+     * @param plugin
+     *            the Plugin
      * @return The referenceList which contains the data of all the properties objects
      */
     ReferenceList selectPropertiesReferenceList( Plugin plugin );
-    
+
     /**
      * Load the data of all the avant objects and returns them as a list
-     * @param plugin the Plugin
-     * @param listIds liste of ids
+     * 
+     * @param plugin
+     *            the Plugin
+     * @param listIds
+     *            liste of ids
      * @return The list which contains the data of all the avant objects
      */
-	List<Properties> selectPropertiesListByIds( Plugin _plugin, List<Integer> listIds );
+    List<Properties> selectPropertiesListByIds( Plugin _plugin, List<Integer> listIds );
 
-    List<Integer> selectIdPropertiesByIdEnv(int nKey, Plugin plugin);
+    List<Integer> selectIdPropertiesByIdEnv( int nKey, Plugin plugin );
 }
