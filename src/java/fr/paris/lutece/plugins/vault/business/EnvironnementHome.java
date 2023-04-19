@@ -34,6 +34,8 @@
 
 package fr.paris.lutece.plugins.vault.business;
 
+import com.bettercloud.vault.VaultException;
+import fr.paris.lutece.plugins.vault.rs.VaultAPI;
 import fr.paris.lutece.plugins.vault.service.EnvironnementUtil;
 import fr.paris.lutece.plugins.vault.service.VaultService;
 import fr.paris.lutece.plugins.vault.service.VaultUtil;
@@ -85,10 +87,11 @@ public final class EnvironnementHome
      *            the environnement
      * @return the environnement
      */
-    public static Environnement update( Environnement environnement )
-    {
+    public static Environnement update( Environnement environnement, String strOldCode, String strOldToken) throws VaultException {
+        Application app = ApplicationHome.findByPrimaryKey( environnement.getIdapplication( ) ).get( );
+        environnement.setPath(EnvironnementUtil.getEnvironmentPath(app.getCode(),environnement.getCode()));
         _dao.store( environnement, _plugin );
-
+        VaultService.getInstance().renameEnvironnement(app,environnement,strOldCode,strOldToken);
         return environnement;
     }
 

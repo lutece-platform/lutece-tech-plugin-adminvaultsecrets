@@ -16,10 +16,44 @@
             </p>
             -->
             <subsection name="Introduction">
-                <p></p>
+                <p>
+                    This plugin allows the creation, modification, and deletion of confidential data stored in the HashiCorp Vault.
+                    Thanks to this plugin, you will be able to create applications in which you will be able to initialize and manage working environments,
+                     in order to store your data.
+                </p>
+                <p>
+                    To facilitate the dialog with the Vault server, the plugin uses the <a href="https://github.com/BetterCloud/vault-java-driver">Java Vault Driver</a>
+                     library from Bettercloud which comes in and creates all the requests to query the Vault APIs.
+                </p>
             </subsection>
             <subsection name="Configuration">
-                <p></p>
+                <p>
+                    Configure the plugin properties file (webapp/WEB-INF/conf/plugins/vault.properties).
+                </p>
+                <p>
+                    In particular, it is necessary to set up :
+                    <ul>
+                        <li>vault.rootToken – Root token generated at the creation of your Vault server</li>
+                        <li>vault.environnement.list – List of keys corresponding to the predefined environment names. The value of these keys must then be defined in your I18N properties.</li>
+                        <li>vault.vaultServerAdress – Address of the Vault servert</li>
+                        <li>vault.addPolicyPath – Policy creation path via API. Default : « /v1/sys/policies/acl/ »</li>
+                        <li>vault.addTokenPath – Token creation path via API. Default : « /v1/auth/token/revoke-accessor »</li>
+                        <li>vault.secretPath – Main folder where applications, environments, and secrets are created. Default : « /secret »</li>
+                    </ul>
+                </p>
+                <div class="source">
+<pre>
+    vault.rootToken=hvs.lSjuVlF7RSEXpSyLOsel2bVc
+    vault.environnement.list=pr,ppr,dev,infra
+    vault.vaultServerAdress=http://127.0.0.1:8200
+    vault.addPolicyPath=/v1/sys/policies/acl/
+    vault.addTokenPath=/v1/auth/token/revoke-accessor
+    vault.secretPath=/secret
+</pre>
+                </div>
+                <p>
+                    Configure
+                </p>
             </subsection>
             <subsection name="Usage">
                 <p></p>

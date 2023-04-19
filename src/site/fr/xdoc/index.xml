@@ -16,10 +16,41 @@
             </p>
             -->
             <subsection name="Introduction">
-                <p></p>
+                <p>
+                    Ce plugin permet la création, la modification, et la suppression de données confidentielles stockées dans le coffre-fort virtuel Vault de HashiCorp.
+                    Grâce à ce plugin, vous pourrez donc créer des applications dans lesquelles vous aurez la possibilité de d’initialiser et gérer des environnements de travail,
+                    afin d’y stocker vos données.
+                </p>
+                <p>
+                    Pour faciliter le dialogue avec le serveur Vault, le plugin utilise la librairie <a href="https://github.com/BetterCloud/vault-java-driver">Java Vault Driver</a>de Bettercloud
+                    qui vient créer toutes les requêtes pour interroger les API Vault.
+                </p>
             </subsection>
             <subsection name="Configuration">
-                <p></p>
+                <p>
+                    Configurer le fichier de propriétés du plugin (webapp/WEB-INF/conf/plugins/vault.properties).
+                </p>
+                <p>
+                    Il faut notamment paramétrer :
+                    <ul>
+                        <li>vault.rootToken – Token root généré à la création de votre serveur Vault</li>
+                        <li>vault.environnement.list – Liste des clés correspondant aux noms prédéfinis d’environnement. La valeur de ces clés doit ensuite être définit dans vos propriétés I18N.</li>
+                        <li>vault.vaultServerAdress – Adresse du serveur Vault</li>
+                        <li>vault.addPolicyPath – Chemin de création de policies via API. Default : « /v1/sys/policies/acl/ »</li>
+                        <li>vault.addTokenPath – Chemin de création de tokens via API. Default : « /v1/auth/token/revoke-accessor »</li>
+                        <li>vault.secretPath – Dossier principal dans lequel sont créés applications, environnements, et secrets. Default : « /secret »</li>
+                    </ul>
+                </p>
+                <div class="source">
+<pre>
+    vault.rootToken=hvs.lSjuVlF7RSEXpSyLOsel2bVc
+    vault.environnement.list=pr,ppr,dev,infra
+    vault.vaultServerAdress=http://127.0.0.1:8200
+    vault.addPolicyPath=/v1/sys/policies/acl/
+    vault.addTokenPath=/v1/auth/token/revoke-accessor
+    vault.secretPath=/secret
+</pre>
+                </div>
             </subsection>
             <subsection name="Usage">
                 <p></p>
