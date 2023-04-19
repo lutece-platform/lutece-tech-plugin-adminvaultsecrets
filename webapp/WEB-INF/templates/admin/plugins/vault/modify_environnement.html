@@ -10,9 +10,13 @@
 			<@input type="hidden" id="id" name="id" value="${environnement.id}"/>
 			<@input type="hidden" value="${token}" name="token" />
 			<@input type="hidden" value="${application.id}" name="idApp" />
+			<@input type='hidden' name="oldCode" value='${environnement.code!\'\'}' />
+			<@input type='hidden' id="path" name="path" value='${environnement.path!\'\'}' />
+			<@input type='hidden' name="oldToken" value='${environnement.token!\'\'}' />
 
-			<@formGroup labelKey='#i18n{vault.modify_environnement.labelCode}' labelFor='code' mandatory=true>
-				<@select name='code' id='code' default_value='' items=environnement_names_example sort=true size='sm' />
+
+		<@formGroup labelKey='#i18n{vault.modify_environnement.labelCode}' labelFor='code' mandatory=true>
+				<@input type='text' id='code' name='code'  maxlength=50 value='${environnement.code!\'\'}-' tabIndex='1' />
 			</@formGroup>
 
         <@actionButtons button1Name="action_modifyEnvironnement"  button2Name="view_manageEnvironnement"/>

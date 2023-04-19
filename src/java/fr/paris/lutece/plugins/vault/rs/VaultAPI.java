@@ -33,15 +33,21 @@
  */
 package fr.paris.lutece.plugins.vault.rs;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.paris.lutece.plugins.vault.business.Environnement;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
-import org.json.simple.JSONObject;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHeaders;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 
-import java.io.DataOutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
 public class VaultAPI
 {
@@ -50,62 +56,39 @@ public class VaultAPI
     {
         try
         {
-            JSONObject policy = new JSONObject( );
-            policy.put( "policy", "# Manage auth methods broadly across Vault\npath \"secret/data/" + appCode + "/" + environnement.getCode( ) + "/*"
-                    + "\"\n{\n  capabilities = [\"read\"]\n}\n\n# Create, update, and delete auth methods\npath \"secret/metadata/" + appCode + "/" + environnement.getCode( ) + "/*\"\n{\n  capabilities = [\"list\"]\n}" );
+            ObjectMapper objectMapper = new ObjectMapper();
+            ObjectNode json = objectMapper.createObjectNode();
+            json.put("policy","# Manage auth methods broadly across Vault\npath \"secret/data/" + appCode + "/" + environnement.getCode( ) + "/*"
+                    + "\"\n{\n  capabilities = [\"read\"]\n}\n\n# Create, update, and delete auth methods\npath \"secret/metadata/" + appCode + "/" + environnement.getCode( ) + "/*\"\n{\n  capabilities = [\"list\"]\n}");
 
             String baseUrl = AppPropertiesService.getProperty( "vault.vaultServerAdress" );
             String policyPath = AppPropertiesService.getProperty( "vault.addPolicyPath" );
             String policyName = appCode + environnement.getCode( );
             String strUrl = baseUrl + policyPath + policyName;
-            URL completeUrl = new URL( strUrl );
+            HttpPost httpPost = new HttpPost(strUrl);
 
-            HttpURLConnection httpConnection = (HttpURLConnection) completeUrl.openConnection( );
-            httpConnection.setDoOutput( true );
-            httpConnection.setRequestMethod( "POST" );
-            httpConnection.setRequestProperty( "X-Vault-Token", AppPropertiesService.getProperty( "vault.rootToken" ) );
-            httpConnection.setRequestProperty( "Content-Type", "application/json" );
-            httpConnection.setRequestProperty( "Accept", "application/json" );
+            httpPost.setHeader("X-Vault-Token", AppPropertiesService.getProperty( "vault.rootToken" ));
+            httpPost.setHeader(HttpHeaders.ACCEPT, "application/json");
+            httpPost.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
+            httpPost.setEntity(new StringEntity(json.toString()));
 
-            DataOutputStream wr = new DataOutputStream( httpConnection.getOutputStream( ) );
-            wr.write( policy.toString( ).getBytes( ) );
-            Integer responseCode = httpConnection.getResponseCode( );
-            AppLogService.info( "Policy creation. Statut : " + responseCode );
+            CloseableHttpClient httpClient = HttpClients.createDefault();
+            CloseableHttpResponse response = httpClient.execute(httpPost);
+
+            HttpEntity httpEntity = response.getEntity();
+            if (httpEntity!=null) {
+                String responseString = EntityUtils.toString(httpEntity);
+                AppLogService.info("Vault removing token status : " + responseString);
+
+            }
+
+            response.close();
+            httpClient.close();
 
         }
         catch( Exception e )
         {
             AppLogService.error( "Error creating policy", e );
-        }
-    }
-
-    public static void removeToken( String accessor )
-    {
-        try
-        {
-            JSONObject policy = new JSONObject( );
-            policy.put( "accessor", accessor );
-
-            String baseUrl = AppPropertiesService.getProperty( "vault.vaultServerAdress" );
-            String tokenPath = AppPropertiesService.getProperty( "vault.addTokenPath" );
-            URL completeUrl = new URL( baseUrl + tokenPath );
-
-            HttpURLConnection httpConnection = (HttpURLConnection) completeUrl.openConnection( );
-            httpConnection.setDoOutput( true );
-            httpConnection.setRequestMethod( "POST" );
-            httpConnection.setRequestProperty( "X-Vault-Token", AppPropertiesService.getProperty( "vault.rootToken" ) );
-            httpConnection.setRequestProperty( "Content-Type", "application/json" );
-            httpConnection.setRequestProperty( "Accept", "application/json" );
-
-            DataOutputStream wr = new DataOutputStream( httpConnection.getOutputStream( ) );
-            wr.write( policy.toString( ).getBytes( ) );
-            Integer responseCode = httpConnection.getResponseCode( );
-            AppLogService.info( "Removing token. Statut : " + responseCode );
-
-        }
-        catch( Exception e )
-        {
-            AppLogService.error( "Error removing token", e );
         }
     }
 
@@ -117,20 +100,71 @@ public class VaultAPI
             String baseUrl = AppPropertiesService.getProperty( "vault.vaultServerAdress" );
             String policyPath = AppPropertiesService.getProperty( "vault.addPolicyPath" );
             String strUrl = baseUrl + policyPath + policy;
-            URL completeUrl = new URL( strUrl );
+            HttpDelete httpDelete = new HttpDelete(strUrl);
 
-            HttpURLConnection httpConnection = (HttpURLConnection) completeUrl.openConnection( );
-            httpConnection.setDoOutput( true );
-            httpConnection.setRequestMethod( "DELETE" );
-            httpConnection.setRequestProperty( "X-Vault-Token", AppPropertiesService.getProperty( "vault.rootToken" ) );
+            httpDelete.setHeader("X-Vault-Token", AppPropertiesService.getProperty( "vault.rootToken" ));
 
-            Integer responseCode = httpConnection.getResponseCode( );
-            AppLogService.info( "Removing policy. Statut : " + responseCode );
+            CloseableHttpClient httpClient = HttpClients.createDefault();
+            CloseableHttpResponse response = httpClient.execute(httpDelete);
+
+            HttpEntity httpEntity = response.getEntity();
+            if (httpEntity!=null) {
+                String responseString = EntityUtils.toString(httpEntity);
+                AppLogService.info("Vault removing policy status : " + responseString);
+
+            }
+
+            response.close();
+            httpClient.close();
 
         }
         catch( Exception e )
         {
             AppLogService.error( "Error removing policy", e );
+        }
+    }
+
+    public static void removeTokenJackson( String accessor )
+    {
+        if (accessor != null) {
+            try
+            {
+                // Créez l'objet que vous souhaitez envoyer en tant que JSON
+
+                // Créez un objet ObjectMapper pour mapper l'objet Java en JSON
+                ObjectMapper objectMapper = new ObjectMapper();
+                ObjectNode json = objectMapper.createObjectNode();
+                json.put("accessor",accessor);
+
+                // First open URL connection (using JDK; similar with other libs)
+                String baseUrl = AppPropertiesService.getProperty( "vault.vaultServerAdress" );
+                String tokenPath = AppPropertiesService.getProperty( "vault.addTokenPath" );
+                String completeUrl = baseUrl + tokenPath;
+                HttpPost httpPost = new HttpPost(completeUrl);
+
+                httpPost.setHeader("X-Vault-Token", AppPropertiesService.getProperty( "vault.rootToken" ));
+                httpPost.setHeader(HttpHeaders.ACCEPT, "application/json");
+                httpPost.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
+                httpPost.setEntity(new StringEntity(json.toString()));
+
+                CloseableHttpClient httpClient = HttpClients.createDefault();
+                CloseableHttpResponse response = httpClient.execute(httpPost);
+
+                HttpEntity httpEntity = response.getEntity();
+                if (httpEntity!=null) {
+                    String responseString = EntityUtils.toString(httpEntity);
+                    AppLogService.info("Vault removing token status : " + responseString);
+
+                }
+
+                response.close();
+                httpClient.close();
+
+            }
+            catch( Exception e )
+            {
+                AppLogService.error( "Error removing token", e );
+            }
         }
     }
 }

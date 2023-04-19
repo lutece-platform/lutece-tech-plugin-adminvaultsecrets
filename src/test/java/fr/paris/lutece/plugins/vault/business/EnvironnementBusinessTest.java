@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.vault.business;
 
+import com.bettercloud.vault.VaultException;
 import fr.paris.lutece.test.LuteceTestCase;
 
 import java.util.Optional;
@@ -54,8 +55,7 @@ public class EnvironnementBusinessTest extends LuteceTestCase
     /**
      * test Environnement
      */
-    public void testBusiness( )
-    {
+    public void testBusiness( ) throws VaultException {
         // Initialize an object
         Environnement environnement = new Environnement( );
         environnement.setCode( CODE1 );
@@ -74,7 +74,7 @@ public class EnvironnementBusinessTest extends LuteceTestCase
         environnement.setCode( CODE2 );
         environnement.setToken( TOKEN2 );
         environnement.setIdapplication( IDAPPLICATION2 );
-        EnvironnementHome.update( environnement );
+        EnvironnementHome.update(environnement, environnement.getCode(), environnement.getToken() );
         optEnvironnementStored = EnvironnementHome.findByPrimaryKey( environnement.getId( ) );
         environnementStored = optEnvironnementStored.orElse( new Environnement( ) );
 

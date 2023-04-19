@@ -124,7 +124,6 @@ public class VaultService
 
         // Token creation with the tokenRequest composed of the policy
         AuthResponse vaultToken = _vault.auth( ).createToken( tokenRequest );
-
         // Adding token accessor to the Environnement Object : can revoke token using accessor
         _listEnvAccessor.addItem( env.getId( ), vaultToken.getTokenAccessor( ) );
         return vaultToken.getAuthClientToken( );
@@ -145,7 +144,7 @@ public class VaultService
     public String regenerateToken( String appCode, Environnement environnement ) throws VaultException
     {
 
-        VaultAPI.removeToken( environnement.getToken( ) );
+        VaultAPI.removeTokenJackson( environnement.getToken( ) );
         _listEnvAccessor.remove( VaultService.getInstance( ).getEnvAccessorObject( environnement.getId( ) ) );
 
         List<String> policies = new ArrayList<>( );
@@ -163,6 +162,34 @@ public class VaultService
         _listEnvAccessor.addItem( environnement.getId( ), vaultToken.getTokenAccessor( ) );
         return vaultToken.getAuthClientToken( );
 
+    }
+
+    public void renameEnvironnement(Application application, Environnement environnement, String strOldCode, String strOldToken) throws VaultException {
+
+        String currentCode = environnement.getCode();
+        String currentToken = environnement.getToken();
+
+        List<String> secretList = _vault.logical( ).list( AppPropertiesService.getProperty("vault.secretPath")+"/"+application.getCode()+"/"+strOldCode ).getListData( );
+        if ( !secretList.isEmpty( ) )
+        {
+            secretList.forEach( x -> {
+                try
+                {
+                    final String secretV = _vault.logical( ).read( AppPropertiesService.getProperty("vault.secretPath")+"/"+application.getCode()+"/"+strOldCode + "/" + x ).getData( ).get( x );
+                    VaultService.getInstance().writeSecret(x,secretV,application,environnement);
+                }
+                catch( VaultException e )
+                {
+                    AppLogService.error( "Erreur pour supprimer l'environnement", e );
+                }
+            } );
+        }
+        environnement.setCode(strOldCode);
+        environnement.setPath(EnvironnementUtil.getEnvironmentPath(application.getCode(),strOldCode));
+        environnement.setToken(strOldToken);
+        VaultService.getInstance().removeEnv(environnement.getToken(),application.getCode(),environnement);
+        environnement.setCode(currentCode);
+        environnement.setToken(currentToken);
     }
 
     /**
@@ -239,26 +266,12 @@ public class VaultService
             } );
         }
         VaultAPI.removePolicy( appCode.toLowerCase( ) + environnement.getCode( ).toLowerCase( ) );
-        VaultAPI.removeToken( token );
+//        VaultAPI.removeToken( token );
+        VaultAPI.removeTokenJackson(token);
         _listEnvAccessor.remove( VaultService.getInstance( ).getEnvAccessorObject( environnement.getId( ) ) );
 
     }
 
-    /**
-     * Remove token.
-     *
-     * @param appCode
-     *            the app code
-     * @param environnement
-     *            the environnement
-     * @throws VaultException
-     *             the vault exception
-     */
-    public void removeToken( String appCode, Environnement environnement ) throws VaultException
-    {
-        VaultAPI.removeToken( environnement.getToken( ) );
-        VaultAPI.removePolicy( appCode.toLowerCase( ) + environnement.getCode( ).toLowerCase( ) );
-    }
 
     /**
      * Write secret.

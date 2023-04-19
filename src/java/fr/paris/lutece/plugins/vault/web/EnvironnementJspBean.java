@@ -336,7 +336,7 @@ public class EnvironnementJspBean extends AbstractManageApplicationJspBean<Integ
     @View( VIEW_MODIFY_ENVIRONNEMENT )
     public String getModifyEnvironnement( HttpServletRequest request ) throws VaultException
     {
-        int nId = Integer.parseInt( request.getParameter( PARAMETER_ID_ENVIRONNEMENT ) );
+         int nId = Integer.parseInt( request.getParameter( PARAMETER_ID_ENVIRONNEMENT ) );
 
         if ( _environnement == null || ( _environnement.getId( ) != nId ) )
         {
@@ -368,8 +368,14 @@ public class EnvironnementJspBean extends AbstractManageApplicationJspBean<Integ
      *             the access denied exception
      */
     @Action( ACTION_MODIFY_ENVIRONNEMENT )
-    public String doModifyEnvironnement( HttpServletRequest request ) throws AccessDeniedException
-    {
+    public String doModifyEnvironnement( HttpServletRequest request ) throws AccessDeniedException, VaultException {
+
+        String strOldCode = request.getParameter( "oldCode" );
+        String strOldToken = request.getParameter( "oldToken" );
+
+        int nId = Integer.parseInt( request.getParameter( PARAMETER_ID_ENVIRONNEMENT ) );
+        int nIdApp = EnvironnementHome.findByPrimaryKey( nId ).get( ).getIdapplication( );
+
         populate( _environnement, request, getLocale( ) );
 
         if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_MODIFY_ENVIRONNEMENT ) )
@@ -383,8 +389,18 @@ public class EnvironnementJspBean extends AbstractManageApplicationJspBean<Integ
             return redirect( request, VIEW_MODIFY_ENVIRONNEMENT, PARAMETER_ID_ENVIRONNEMENT, _environnement.getId( ) );
         }
 
-        EnvironnementHome.update( _environnement );
         addInfo( INFO_ENVIRONNEMENT_UPDATED, getLocale( ) );
+
+
+        String strToken = VaultService.getInstance( )
+                .createEnvironnementToken( ApplicationHome.findByPrimaryKey( _environnement.getIdapplication( ) ).get( ).getCode( ), _environnement );
+        Object [ ] tabObj = {
+                strToken
+        };
+        addWarning( I18nService.getLocalizedString( "vault.manage_environnement.create_token", tabObj, getLocale( ) ) );
+
+        EnvironnementHome.update( _environnement, strOldCode, strOldToken );
+
         resetListId( );
 
         return redirect( request, VIEW_MANAGE_ENVIRONNEMENTS, PARAMETER_ID_APPLICATION, _environnement.getIdapplication( ) );
