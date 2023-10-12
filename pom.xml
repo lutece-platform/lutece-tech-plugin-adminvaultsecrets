@@ -66,4 +66,11 @@
         <jiraProjectName>VAULT</jiraProjectName>
         <jiraComponentId></jiraComponentId>
     </properties>
+
+    <scm>
+        <connection>scm:git:https://github.com/lutece-platform/lutece-tech-plugin-adminvaultsecrets.git</connection>
+        <developerConnection>scm:git:https://github.com/lutece-platform/lutece-tech-plugin-adminvaultsecrets.git</developerConnection>
+        <url>https://github.com/lutece-platform/lutece-tech-plugin-adminvaultsecrets.git</url>
+    </scm>
+
 </project>
